@@ -1,0 +1,105 @@
+[
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 1
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 1
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 1
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 1
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 2
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 2
+  },
+  {
+    "title": "Producto 1",
+    "description": "Descripción del producto 1",
+    "price": 55.9,
+    "thumbnail": "ruta/imagen1.jpg",
+    "code": "A001",
+    "stock": 25,
+    "id": 2
+  }
+]

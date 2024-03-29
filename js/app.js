@@ -1,12 +1,41 @@
+const fs = require('fs').promises
+
+
 class ProductManager {
     
     constructor() {
         this.products = []
         this. product_id = 1
+        this.path = "Productos.json"
         
     }
 
-    addProduct(product) {
+    async createProduct(product){
+        try {
+            let  products = await this.readProducts()
+            products.push(product)
+            await fs.writeFile(this.path, JSON.stringify(products, null, 2))
+            console.log("Producto creado correctamente")
+        } catch (error) {
+            console.error("Error al crear el producto", error)
+            
+        }
+
+    }
+
+    
+    async addProduct(product) {
+    try {
+        let product = await this.readProducts()
+        product.id= this.product_id++
+        this.products.push(product)
+        await fs.appendFile(this.path, JSON.stringify(product, null,2))
+        console.log("Se agrego correctamente el producto")
+
+    } catch (error) {
+        console.error("Error al agrgar", error)
+        
+    }
         if(!this.productValid(product)){
             console.log("Producto no valido")
             return
@@ -18,10 +47,46 @@ class ProductManager {
         product.id= this.product_id++
         this.products.push(product)
     }
-    getProduct() {
-        return this.products
+    productValid(product){
+        return(
+            product.title &&
+            product.description &&
+            product.price &&
+            product.thumbnail &&
+            product.code &&
+            product.stock !== undefined 
+        )
     }
-    getProductById(product_id) {
+    codeDuplicate(code){
+        return this.products.some((product)=> product.code === code)
+    }
+
+    async getProducts(){
+        try {
+            return await this.readProducts()
+        } catch (error) {
+            console.error("Error al consutar productos", error)
+            return []
+        }
+
+    }
+    async readProducts(){
+        try {
+        const data = await fs.readFile(this.path, 'utf8')
+            return JSON.parse(data)
+        } catch (error) {
+            //verifica si el archivo esta vacio
+            if(error.code === 'ENOENT'){
+                return []
+            } else{
+                throw error
+            }
+            
+        }
+    }
+
+
+getProductById(product_id) {
         const product_encontrado = this.products.find((product) => product.id === product_id)
         if (product_encontrado) {
             return product_encontrado
@@ -30,53 +95,7 @@ class ProductManager {
         }
 
     } 
-    productValid(product){
-        return(
-            product.title &&
-            product.description &&
-            product.price &&
-            product.thumbnail &&
-            product.code &&
-            product.stock !== undefined
-        )
-    }
-    codeDuplicate(code){
-        return this.products.some((product)=> product.code === code)
-    }
 
 
 }
-const productManager = new ProductManager()
-
-//agregar eventos
-productManager.addProduct({
-    title: "Producto 1",
-    description: "Descripción del producto 1",
-    price: 55.90,
-    thumbnail: 'ruta/imagen1.jpg',
-    code: 'A001',
-    stock: 25
-})
-productManager.addProduct({
-    title: "Producto 2",
-    description: "Descripción del producto 2",
-    price: 30.00,
-    thumbnail: 'ruta/imagen2.jpg',
-    code: 'A002',
-    stock: 30
-})
-productManager.addProduct({
-    title: "Producto 3",
-    description: "Descripción del producto 3",
-    price: 22.50,
-    thumbnail: 'ruta/imagen1.jpg',
-    code: 'A003',
-    stock: 10
-})
-
-
-
-
-const productos = productManager.getProduct()
-const producto = productManager.getProductById(1)
-console.log(producto)
+module.exports = ProductManager
