@@ -1,67 +1,63 @@
+
+
 const fs = require('fs').promises
 
 
 class ProductManager {
-    
+
     constructor() {
         this.products = []
-        this. product_id = 1
         this.path = "Productos.json"
-        
+
     }
 
-    async createProduct(product){
+    async createProduct(products) {
         try {
-            let  products = await this.readProducts()
-            products.push(product)
             await fs.writeFile(this.path, JSON.stringify(products, null, 2))
-            console.log("Producto creado correctamente")
         } catch (error) {
             console.error("Error al crear el producto", error)
-            
+
         }
 
     }
 
-    
+
     async addProduct(product) {
-    try {
-        let product = await this.readProducts()
-        product.id= this.product_id++
-        this.products.push(product)
-        await fs.appendFile(this.path, JSON.stringify(product, null,2))
-        console.log("Se agrego correctamente el producto")
+        try {
+            //validar campos requeridos
+            if (!this.productValid(product)) {
+                throw new Error("Producto no valido")
+            }
+            //leer el archivo de productos
+            const products = await this.readProducts()
+            if (this.codeDuplicate(product.code, products)) {
+                throw new Error("El codigo ya esta en uso")
+            }
+            product.id = products.length > 0 ? products[products.length - 1].id + 1 : 1;
+            products.push(product)
+            await this.createProduct(products)
+            console.log("Producto agrgado correctamente")
+            return product
+        } catch (error) {
+            throw error
 
-    } catch (error) {
-        console.error("Error al agrgar", error)
-        
-    }
-        if(!this.productValid(product)){
-            console.log("Producto no valido")
-            return
         }
-        if(this.codeDuplicate(product.code)){
-            console.log("El codigo ya esta en uso")
-            return
-        }
-        product.id= this.product_id++
-        this.products.push(product)
     }
-    productValid(product){
-        return(
+    productValid(product) {
+        return (
             product.title &&
             product.description &&
             product.price &&
             product.thumbnail &&
             product.code &&
-            product.stock !== undefined 
+            product.stock !== undefined
         )
     }
-    codeDuplicate(code){
-        return this.products.some((product)=> product.code === code)
+    codeDuplicate(code, products) {
+        return products.some((product) => product.code === code)
     }
 
-    async getProducts(){
+    async getProducts() {
         try {
             return await this.readProducts()
         } catch (error) {
@@ -70,31 +66,40 @@ class ProductManager {
         }
 
     }
-    async readProducts(){
+    async readProducts() {
         try {
-        const data = await fs.readFile(this.path, 'utf8')
+            const data = await fs.readFile(this.path, 'utf8')
             return JSON.parse(data)
         } catch (error) {
+            console.error("Error al consultar productos", error)
             //verifica si el archivo esta vacio
-            if(error.code === 'ENOENT'){
+            if (error.code === 'ENOENT') {
+                //si el archivo no existe lo creamos con un array vacio
+                await fs.writeFile(this.path, JSON.stringify([], null, 2))
                 return []
-            } else{
+            } else {
                 throw error
             }
-            
+
         }
     }
 
 
-getProductById(product_id) {
-        const product_encontrado = this.products.find((product) => product.id === product_id)
-        if (product_encontrado) {
-            return product_encontrado
-        } else{
-            console.log("Not Found")
+    async getProductById(id) {
+        try {
+            const products = await this.readProducts()
+            const product_encontrado = products.find((product) => product.id === id)
+            if (product_encontrado) {
+                return product_encontrado
+            }else{
+                console.log("No se encontro el  producto")
+            }
+        } catch (error) {
+            throw error
+
         }
 
-    } 
+    }
 
 
 }

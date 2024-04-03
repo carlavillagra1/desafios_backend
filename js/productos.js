@@ -2,6 +2,7 @@ const ProductManager = require("./app.js")
 
 const productManager = new ProductManager()
 //agregar eventos
+/*
 productManager.createProduct({
     title: "Producto 1",
     description: "Descripción del producto 1",
@@ -12,25 +13,19 @@ productManager.createProduct({
 
 })
 productManager.addProduct({
-    title: "Producto 2",
-    description: "Descripción del producto 2",
-    price: 30.00,
-    thumbnail: 'ruta/imagen2.jpg',
-    code: 'A002',
-    stock: 30
-})
-productManager.addProduct({
-    title: "Producto 2",
-    description: "Descripción del producto 3",
-    price: 40.00,
-    thumbnail: 'ruta/imagen3.jpg',
-    code: 'A003',
+    title: "Producto 4",
+    description: "Descripción del producto 4",
+    price: 50.00,
+    thumbnail: 'ruta/imagen4.jpg',
+    code: 'A004',
     stock: 50
 })
-
+*/
 
 
 //consultar productos
 productManager.getProducts()
 .then(productos => console.log('Productos', productos))
 .catch(error => console.error("Error al consultar productos", error))
+
+console.log(productManager.getProductById("1"))
