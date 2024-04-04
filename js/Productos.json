@@ -16,23 +16,5 @@
     "code": "A002",
     "stock": 50,
     "id": 2
-  },
-  {
-    "title": "Producto 3",
-    "description": "Descripción del producto 3",
-    "price": 50,
-    "thumbnail": "ruta/imagen3.jpg",
-    "code": "A003",
-    "stock": 50,
-    "id": 3
-  },
-  {
-    "title": "Producto 4",
-    "description": "Descripción del producto 4",
-    "price": 50,
-    "thumbnail": "ruta/imagen4.jpg",
-    "code": "A004",
-    "stock": 50,
-    "id": 4
   }
 ]

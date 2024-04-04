@@ -40,7 +40,6 @@ class ProductManager {
             return product
         } catch (error) {
             throw error
-
         }
     }
     productValid(product) {
@@ -88,10 +87,10 @@ class ProductManager {
     async getProductById(id) {
         try {
             const products = await this.readProducts()
-            const product_encontrado = products.find((product) => product.id === id)
-            if (product_encontrado) {
-                return product_encontrado
-            }else{
+            const productFound = products.find((product) => product.id === id)
+            if (productFound) {
+                return productFound
+            } else {
                 console.log("No se encontro el  producto")
             }
         } catch (error) {
@@ -100,7 +99,71 @@ class ProductManager {
         }
 
     }
+    
+    async updateProduct(id, obj, campo, valor) {
+        const products = await this.readProducts()
+        const index = await products.findIndex((product) => product.id === id)
+        if (index === -1) {
+            console.log("No se encontro el producto")
+            await this.createProduct(products)
+            
+        } else {
+            console.log("Producto modificado")
+        }
+        let newProduct ;
+        switch (campo) {
+            case "title":
+                newProduct = {...products[index], title: valor} 
+                products[index] = newProduct
+                break;
+            case "description":
+                newProduct = {...products[index], description: valor} 
+                products[index] = newProduct
+                break;
+            case "price":
+                newProduct = {...products[index], price: valor} 
+                products[index] = newProduct
+                break;
+            case "thumbnail":
+                newProduct = {...products[index], thumbnail: valor} 
+                products[index] = newProduct
+                break;
+            case "code":
+                newProduct = {...products[index], code: valor} 
+                products[index] = newProduct
+                break;
+                case "stock":
+                newProduct = {...products[index], stock: valor} 
+                products[index] = newProduct
+                break;
+                case undefined:
+                    products[index] = { id: products[index].id, ...obj };
+                    break;
+        }
 
+        try {
+            await fs.writeFile(this.path, JSON.stringify(products))
+        } catch (error) {
+            throw error("Error al modificar el producto")
+        }
+    }
+
+    async deleteById(id) {
+        let products = await this.readProducts()
+        const index = await products.findIndex((product) => product.id == id)
+        if (index === -1) {
+            console.log("No se encontro el producto para eliminar")
+            return
+        }
+        products = products.filter(product => product.id != id)
+        try {
+            await fs.writeFile(this.path, JSON.stringify(products))
+            console.log("Producto eliminado")
+        } catch (error) {
+            throw error("Error al eliminar el producto")
+
+        }
+    }
 
 }
 module.exports = ProductManager
