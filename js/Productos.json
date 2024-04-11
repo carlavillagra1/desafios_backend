@@ -5,7 +5,7 @@
     "price": 50,
     "thumbnail": "ruta/imagen1.jpg",
     "code": "A001",
-    "stock": 50,
+    "stock": 51,
     "id": 1
   },
   {
@@ -14,7 +14,16 @@
     "price": 50,
     "thumbnail": "ruta/imagen2.jpg",
     "code": "A002",
-    "stock": 50,
+    "stock": 51,
     "id": 2
+  },
+  {
+    "title": "Producto 3",
+    "description": "Descripción del producto 3",
+    "price": 50,
+    "thumbnail": "ruta/imagen3.jpg",
+    "code": "A003",
+    "stock": 51,
+    "id": 3
   }
 ]

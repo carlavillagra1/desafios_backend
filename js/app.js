@@ -1,3 +1,4 @@
+const { error } = require('console')
 
 
 const fs = require('fs').promises
@@ -5,9 +6,9 @@ const fs = require('fs').promises
 
 class ProductManager {
 
-    constructor() {
+    constructor(path) {
         this.products = []
-        this.path = "Productos.json"
+        this.path = path
 
     }
 
@@ -15,7 +16,7 @@ class ProductManager {
         try {
             await fs.writeFile(this.path, JSON.stringify(products, null, 2))
         } catch (error) {
-            console.error("Error al crear el producto", error)
+            throw new Error("Error al actualizar")
 
         }
 
@@ -36,7 +37,6 @@ class ProductManager {
             product.id = products.length > 0 ? products[products.length - 1].id + 1 : 1;
             products.push(product)
             await this.createProduct(products)
-            console.log("Producto agrgado correctamente")
             return product
         } catch (error) {
             throw error
@@ -90,14 +90,20 @@ class ProductManager {
             const productFound = products.find((product) => product.id === id)
             if (productFound) {
                 return productFound
-            } else {
-                console.log("No se encontro el  producto")
-            }
+            } 
         } catch (error) {
             throw error
 
         }
 
+    }
+    async refreshProducts (products){
+        try {
+            await fs.writeFile(this.path, JSON.stringify(products))
+        } catch (error) {
+            throw error
+            
+        }
     }
     
     async updateProduct(id, obj, campo, valor) {
@@ -107,8 +113,6 @@ class ProductManager {
             console.log("No se encontro el producto")
             await this.createProduct(products)
             
-        } else {
-            console.log("Producto modificado")
         }
         let newProduct ;
         switch (campo) {
@@ -142,7 +146,7 @@ class ProductManager {
         }
 
         try {
-            await fs.writeFile(this.path, JSON.stringify(products))
+                await this.refreshProducts()
         } catch (error) {
             throw error("Error al modificar el producto")
         }
@@ -152,13 +156,11 @@ class ProductManager {
         let products = await this.readProducts()
         const index = await products.findIndex((product) => product.id == id)
         if (index === -1) {
-            console.log("No se encontro el producto para eliminar")
-            return
+            throw error("No se encontro el producto para eliminar")
         }
         products = products.filter(product => product.id != id)
         try {
-            await fs.writeFile(this.path, JSON.stringify(products))
-            console.log("Producto eliminado")
+            await this.refreshProducts()
         } catch (error) {
             throw error("Error al eliminar el producto")
 
