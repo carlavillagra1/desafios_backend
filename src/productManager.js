@@ -94,6 +94,7 @@ class ProductManager {
 
     }
     async refreshProducts (products){
+        
         try {
             await fs.writeFile(this.path, JSON.stringify(products))
         } catch (error) {
