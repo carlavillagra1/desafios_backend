@@ -1,0 +1,12 @@
+.contedor{
+    background: red;
+    padding: 10px;
+    color: green;
+}
+
+.agregarp{
+    background: blue;
+    width: 350px;
+    padding: 15px;
+    display: flex;
+}
