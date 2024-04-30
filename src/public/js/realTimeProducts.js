@@ -15,6 +15,7 @@ btnAgregar.addEventListener('click', () =>{
     socket.emit('NewProduct', {title, description, price, code, stock, category})
 })
 socket.on('products', products =>{
+    console.log(products)
     ListProducts.innerHTML = ``
     products.forEach(product => {
         const p = document.createElement('p')
