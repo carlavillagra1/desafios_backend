@@ -45,7 +45,8 @@ class ProductManager {
             product.price &&
             product.thumbnail &&
             product.code &&
-            product.stock !== undefined
+            product.stock !== undefined &&
+            product.category
         )
     }
     codeDuplicate(code, products) {

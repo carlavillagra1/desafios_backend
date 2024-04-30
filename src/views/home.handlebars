@@ -1,5 +1,4 @@
 <div>
-    {{#if length}}
         <div>
             <h1>Productos:</h1>
             <ul>
@@ -17,10 +16,7 @@
                 {{/each}}
             </ul>
         </div>
-    {{else}}
-        <h1>No hay productos</h1>
-    {{/if}}
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="../public/js/index.js"></script>
-<script src="../public/css/index.css"></script>
+<script src="/js/realtimeProducts.js"></script>
+<script src="/css/index.css"></script>

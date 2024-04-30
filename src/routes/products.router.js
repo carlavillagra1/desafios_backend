@@ -6,6 +6,17 @@ const ProductManager = require("../functions/productManager")
 
 const productManager = new ProductManager("./src/json/Productos.json")
 
+
+
+router.get('/realTimeProducts', async (req,res) =>{
+    try {
+        const products = await productManager.readProducts()
+        res.render('home', {products})
+    } catch (error) {
+        res.status(404).json({message: "Error al obtener los productos"})
+    }
+})
+
 router.get('/', async(req,res) =>{
     try {
         const productsArray = await productManager.readProducts()

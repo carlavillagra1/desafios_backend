@@ -13,9 +13,9 @@ const httpServer = app.listen(port, console.log(`Server running on port ${port}`
 const socketServer = Server (httpServer)
 
 app.engine('handlebars', handlebars.engine())
-app.set('views', __dirname + '/src/views')
+app.set('views', __dirname + '/views')
 app.set('view engine','handlebars')
-app.use(express.static(__dirname + '/src/public'))
+app.use(express.static(__dirname + '/public'))
 
 
 app.use(express.urlencoded({extended:true}))
@@ -28,15 +28,14 @@ app.use("/",routesView)
 
 socketServer.on('connection', socket =>{
     console.log(" Nuevo cliente conectado")
-
-productManager.getProducts()
+productManager.readProducts()
 .then((products) =>{
     socket.emit('products', products)
 })
 socket.on('NewProduct', product =>{
     productManager.addProduct(product.title, product.description, product.price, [] , product.code, product.stock, product.category)
     .then(() =>{
-        productManager.getProducts()
+        productManager.readProducts()
         .then((products) =>{
             socket.emit('products', products)
             socket.emit('responseAdd', "Producto agregado")
