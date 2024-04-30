@@ -1,1 +1,47 @@
-[{"id":1,"title":"titulo actualizado","description":"nuevo","price":"34500","thumbnail":["img.jpg, img3.jpg"],"code":"AAA23","stock":"23","category":"mujer","status":true},{"id":2,"title":"campera adidas","price":"45000 ","thumbnail":["ruta/imagen3.jpg, img6"],"code":"A2223","stock":"33","category":"dama","status":true}]
+[
+  {
+    "id": 1,
+    "title": "titulo actualizado",
+    "description": "nuevo",
+    "price": "34500",
+    "thumbnail": [
+      "img.jpg, img3.jpg"
+    ],
+    "code": "AAA23",
+    "stock": "23",
+    "category": "mujer",
+    "status": true
+  },
+  {
+    "id": 2,
+    "title": "campera adidas",
+    "price": "45000 ",
+    "thumbnail": [
+      "ruta/imagen3.jpg, img6"
+    ],
+    "code": "A2223",
+    "stock": "33",
+    "category": "dama",
+    "status": true
+  },
+  {
+    "title": "eeee",
+    "description": "usado en buen estado",
+    "price": "5556",
+    "thumbnail": "img.jpg, img4.jpg66",
+    "code": "AA00126",
+    "stock": "54",
+    "category": "hombre",
+    "id": 3
+  },
+  {
+    "title": "remera",
+    "description": "usado en buen estado",
+    "price": "5556",
+    "thumbnail": "img.jpg, img4.jpg69",
+    "code": "AA00187",
+    "stock": "54",
+    "category": "hombre",
+    "id": 4
+  }
+]

@@ -32,9 +32,9 @@ productManager.readProducts()
 .then((products) =>{
     socket.emit('products', products)
 })
-socket.on('NewProduct', product =>{
-    productManager.addProduct(product.title, product.description, product.price, [] , product.code, product.stock, product.category)
-    .then(() =>{
+socket.on('NewProduct', (title, description, price, thumbnail, code, stock, category) =>{
+    productManager.addProduct( title, description, price, thumbnail, code, stock, category)
+    .then(() => {
         productManager.readProducts()
         .then((products) =>{
             socket.emit('products', products)
@@ -43,7 +43,7 @@ socket.on('NewProduct', product =>{
     })
 
 .catch((error) => 
-        socket.emit('respondeAdd', "Error al agregar el producto" + error.message ))
+        socket.emit('responseAdd', "Error al agregar el producto" + error.message ))
     }) 
 
 socket.on('eliminarProduct', pid =>{
