@@ -1,0 +1,20 @@
+<div class="container"> 
+    <h2>Detalles del producto</h2>
+<div class="containercart">
+    <div class="cartDetail">
+    <strong class="infoFoto"> {{product.thumbnail}}</strong> 
+    <strong class="info">{{product.title}}</strong> 
+    <strong class="info">Descripción:</strong> {{product.description}}
+    <strong class="info">Precio:</strong> {{product.price}}
+    <strong class="info">Stock:</strong> {{product.stock}}
+    <strong class="info">Código:</strong> {{product.code}}
+    <form action="/api/carts/6650dacf751e5e5f87b268c7/product/{{product._id}}" method="POST">
+    <button type="submit" class="btnCarrito">Agregar al carrito</button>
+    </form>
+    </div>
+    <div class="volver">
+    <a href="http:/api/views/home"> Volver a home</a>
+    </div>
+</div>
+
+</div>

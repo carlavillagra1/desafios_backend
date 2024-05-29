@@ -1,17 +1,200 @@
-.contedor{
-    background: red;
+.container{
     padding: 10px;
-    color: green;
+    height: 96vh;
+}
+.contenedorCarts{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.carts{
+    border: 2px solid gray;
+    border-radius: 10px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 350px;
+}
+.infoFoto{
+    width: 150px;
+    height: 150px;
+    align-items: center;
+    text-align: center;
+    background: gray;
+}
+.btnDetail{
+    width: 150px;
+    background: gray;
+    color: black;
+    padding: 10px;
+    border: none;
+    font-weight: bold;
+    border-radius: 10px;
+    font-size: 15px;
+    text-decoration: none;
+    align-items: center;
+    text-align: center;
 }
 
-.agregarp{
-    background: blue;
-    width: 350px;
-    padding: 15px;
+.paginate{
+    padding: 10px;
+    font-weight: bolder;
+    align-items: center;
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
 }
-#productList{
-    background: red;
-    width: 400px;
+ .paginate a{
+    width: 200px;
     display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border: 2px solid gray;
+    align-items: center;
+    border-radius: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.btnCarrito{
+    width: 150px;
+    background: gray;
+    color: black;
+    padding: 10px;
+    border: none;
+    font-weight: bold;
+    border-radius: 10px;
+    font-size: 15px;
+}
+.container h2{
+    text-align: center;
+    align-items: center;
+}
+.containercart{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+
+}
+.cartDetail{
+    border: 2px solid gray;
+    border-radius: 10px;
+    width: 550px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 450px;
+}
+.volver a{
+    text-decoration: none;
+    width: 200px;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border: 2px solid gray;
+    align-items: center;
+    border-radius: 10px;
+    color: black;
+}
+
+.contenedorFilter{
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.sectionCategory{
+    width: 200px;
+    padding: 10px;
+}
+.category{
+    border: 4px solid gray;
+    width: 209px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px;
+    color: gray;
+}
+.category option{
+    background: none;
+    color: black;
+    font-weight: bold;
+}
+.sectionInput{
+    width: 750px;
+    height: 40px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.Limite{
+    width: 50px;
+    height: 20px;
+    padding: 4px;
+    font-weight: bold;
+}
+.limit{
+    width: 60px;
+    height: 10px;
+    border-radius: 10px;
+    border: 2px solid gray;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px;
+}
+.buscador{
+    width: 250px;
+    border-radius: 20px;
+    border: 2px solid gray;
+    padding: 10px;
+}
+.precios{
+    width: 120px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+}
+.precios option{
+    background: none;
+    color: black;
+    font-weight: bold;
+    font-size: 13px;
+}
+.btn{
+    width: 150px;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 10px;
+    background: gray;
+    border: none;
+}
+.carrito{
+    background: gray;
+    width: 550px;
+    align-items: center;
+    height: 200px;
+    color: aliceblue;
+    border-radius: 10px;
+    padding: 10px;
+}
+.lista{
+    background: gray;
+    width: 550px;
+    align-items: center;
+    color: aliceblue;
 }

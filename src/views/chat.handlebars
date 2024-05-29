@@ -1,0 +1,12 @@
+<div  class="contenedorForm">
+    <label for="email">Ingrese su email:</label>
+    <input type="email" name="email" id="user" required>
+    <label for="mensaje">Ingrese un mensaje</label>
+    <input type="text" name="message" id="message" required>
+    <button type="button" id="btnAgregar">Enviar</button>
+</div>
+
+<div id="messagesList" class="contenedorChat"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>
