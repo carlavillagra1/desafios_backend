@@ -11,6 +11,8 @@ const productManagerMongo = require('./dao/productManagerMDB.js');
 const productManager = new productManagerMongo();
 const messageMongo = require('./dao/messageManagerMDB.js');
 const messageManager = new messageMongo();
+const dotenv = require('dotenv');
+const path = require('path')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const Server = require('socket.io');
@@ -25,7 +27,15 @@ const hbs = handlebars.create({
         allowProtoMethodsByDefault: true,
     }
 });
+dotenv.config({path: path.resolve(__dirname, "../../.env")})
 
+app.use(session({
+    secret: 'secretkey',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB }),
+    // cookie: { maxAge: 180 * 60 * 1000 } // 3 horas
+}));
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
@@ -34,13 +44,6 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(session({
-    secret: 'secretkey',
-    resave: false,
-    saveUninitialized: true,
-    store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
-    // cookie: { maxAge: 180 * 60 * 1000 } // 3 horas
-}));
 
 app.use('/api/product', productRouterMDB);
 app.use('/api/message', messageRouterMDB);
