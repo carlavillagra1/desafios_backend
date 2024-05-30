@@ -22,7 +22,7 @@ socket.on('products', products =>{
 
         btnEliminar.innerHTML = 'Eliminar'
         btnEliminar.addEventListener('click', () =>{
-            socket.emit('eliminarProduct', product.id)
+            socket.emit('eliminarProduct', product._id)
         })
         
         p.innerHTML = `

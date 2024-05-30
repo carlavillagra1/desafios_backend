@@ -3,12 +3,10 @@ const cartManagerMongo = require("../dao/cartsManagerMDB");
 const cartManager = new cartManagerMongo();
 const productManagerMongo = require("../dao/productManagerMDB.js");
 const productManager = new productManagerMongo();
-const isAuthenticated = require("../public/js/auth.js")
-const isNotAuthenticated  = require("../public/js/auth.js")
-
+const { isAuthenticated, isNotAuthenticated } = require('../public/js/auth.js'); 
 const router = express.Router();
 
-router.get('/home', async (req, res) => {
+router.get('/home', isAuthenticated , async(req, res) => {
     try {
         let page = parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 5;
@@ -21,7 +19,7 @@ router.get('/home', async (req, res) => {
         result.nextLink = result.hasNextPage ? `http://localhost:8080/api/views/home?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}&categoria=${categoria}` : '';
         result.isValid = !(page <= 0 || page > result.totalPages);
 
-        res.render("home", { result, style: 'index.css' });
+        res.render("home", { result,  user: req.session.user , style: 'index.css' });
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los productos: " + error.message });
     }
@@ -45,45 +43,49 @@ router.get('/chat', (req, res) => {
     res.render('chat', { style: 'index.css' });
 });
 
-router.get('/realTimeProducts', (req, res) => {
-    res.render("realTimeProducts",{});
+router.get('/realTimeProducts', isAuthenticated, (req, res) => {
+    res.render("realTimeProducts",{  user: req.session.user , style: 'index.css'});
 });
 
 router.get('/cart', async (req, res) => {
     try {
         const cid = '6650dacf751e5e5f87b268c7'; // El ID del carrito que quieres mostrar
         const cart = await cartManager.cartFindOne(cid);
-        if (!cart || !cart.products || cart.products.length === 0) {
-            return res.render('cart', { cart: { products: [] } });
-        }
 
-        const groupedProducts = cart.products.reduce((acc, product) => {
-            const productId = product.product._id.toString();
+        if (!cart || !cart.products || cart.products.length === 0) {
+            return res.render('cart', { cartGroupedProducts: [], total: 0, style: 'index.css' });
+        }
+        const validProducts = cart.products.filter(item => item.product !== null);
+        const groupedProducts = validProducts.reduce((acc, item) => {
+            const productId = item.product._id.toString();
             if (!acc[productId]) {
                 acc[productId] = {
-                    title: product.product.title,
-                    price: product.product.price,
-                    totalQuantity: 0
+                    title: item.product.title,
+                    price: item.product.price,
+                    totalQuantity: 0,
+                    subtotal: 0
                 };
             }
-            acc[productId].totalQuantity += product.quantity;
+            acc[productId].totalQuantity += item.quantity;
+            acc[productId].subtotal = acc[productId].totalQuantity * acc[productId].price;
             return acc;
         }, {});
-
         const cartGroupedProducts = Object.values(groupedProducts);
-        res.render('cart', { cartGroupedProducts, style:'index.css' });
+        const total = cartGroupedProducts.reduce((acc, item) => acc + item.subtotal, 0);
+        res.render('cart', { cartGroupedProducts, total, style: 'index.css' });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al obtener el carrito');
     }
 });
 
+
 router.get('/login', isNotAuthenticated, (req, res) => {
-    res.render('login');
+    res.render('login', {style: 'index.css'});
 });
 
 router.get('/register', isNotAuthenticated, (req, res) => {
-    res.render('register');
+    res.render('register', {style: 'index.css'});
 });
 
 router.get('/profile', isAuthenticated, (req, res) => {

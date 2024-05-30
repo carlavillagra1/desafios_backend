@@ -1,14 +1,14 @@
 <div class="container">
-    <h2>Carrito de Compras</h2>
+    <h4>Carrito de Compras</h4>
     <ul class="carrito">
         {{#if cartGroupedProducts.length}}
+                <strong class="total">Total: {{total}}</strong>
             {{#each cartGroupedProducts}}
                 <li>
-                    <strong>{{this.title}}</strong> - Cantidad: {{this.totalQuantity}} - Precio: ${{this.price}}
-                    <strong>Subtotal:</strong>
+                    <strong>Producto:</strong> {{this.title}}  <strong>Precio:</strong> ${{this.price}} <strong>Cantidad:</strong> {{this.totalQuantity}}
+                    <strong>Subtotal:</strong> {{this.subtotal}}  <button class="eliminar-producto" data-id="{{this._id}}" data-cart-id="{{../cartId}}">Eliminar</button>
                 </li>
             {{/each}}
-                <strong>Total:</strong>
         {{else}}
             <p>El carrito está vacío.</p>
         {{/if}}
@@ -17,4 +17,5 @@
         <a href="/api/views/home">Volver a home</a>
     </div>
 </div>
+    <script src="/js/cart.js"></script>
 

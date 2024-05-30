@@ -3,7 +3,7 @@ const isAuthenticated = (req, res, next) => {
     if (req.session.user) {
         return next();
     } else {
-        res.redirect('/login');
+        res.redirect('/api/views/login');
     }
 };
 
@@ -11,7 +11,7 @@ const isNotAuthenticated = (req, res, next) => {
     if (!req.session.user) {
         return next();
     } else {
-        res.redirect('/profile');
+        res.redirect('/api/views/profile');
     }
 }
-module.exports = isAuthenticated, isNotAuthenticated;
+module.exports = { isAuthenticated, isNotAuthenticated };

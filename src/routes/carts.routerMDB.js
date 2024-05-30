@@ -25,19 +25,22 @@ router.post('/:cid/product/:id', async (req, res) => {
         if (!cart) {
             return res.status(404).json({ message: "Carrito no encontrado" });
         }
+        cart.products = cart.products.filter(p => p.product !== null);
+
         const existingProductIndex = cart.products.findIndex(p => p.product.toString() === id);
         if (existingProductIndex >= 0) {
             cart.products[existingProductIndex].quantity += 1;
         } else {
             cart.products.push({ product: id, quantity: 1 });
         }
+
         await cart.save();
-        res.redirect('/cart');
-        res.send({ result :"success", cart });
+        return res.redirect('/api/views/cart');
     } catch (error) {
-        res.status(500).json({ message: "Error al agregar el producto al carrito", error });
+        return res.status(500).json({ message: "Error al agregar el producto al carrito", error });
     }
 });
+
 
 
 router.post('/', async (req, res) => {

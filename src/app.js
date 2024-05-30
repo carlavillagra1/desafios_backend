@@ -7,6 +7,7 @@ const messageRouterMDB = require('./routes/message.routerMDB.js');
 const cartsRouterMDB = require('./routes/carts.routerMDB.js');
 const sessionRouter = require('./routes/session.routerMDB.js')
 const viewRouter = require('./routes/views.router.js');
+const db = require('./config/database.js')
 const productManagerMongo = require('./dao/productManagerMDB.js');
 const productManager = new productManagerMongo();
 const messageMongo = require('./dao/messageManagerMDB.js');
@@ -17,6 +18,7 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const Server = require('socket.io');
 const port = 8080;
+dotenv.config()
 
 const httpServer = app.listen(port, console.log(`Server running on port ${port}`));
 const socketServer = Server(httpServer);
@@ -27,7 +29,6 @@ const hbs = handlebars.create({
         allowProtoMethodsByDefault: true,
     }
 });
-dotenv.config({path: path.resolve(__dirname, "../../.env")})
 
 app.use(session({
     secret: 'secretkey',

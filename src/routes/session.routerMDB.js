@@ -1,14 +1,14 @@
 const express = require("express");
-const user = require("../dao/models/user.model.js")
+const User = require("../dao/models/user.model.js")
 
 const router = express.Router()
 
 router.post('/register', async(req,res) =>{
         const { nombre, apellido, email, age, password, role } = req.body;
         try {
-            const newUser = new user({ nombre, apellido, email, age, password, role});
+            const newUser = new User({ nombre, apellido, email, age, password, role});
             await newUser.save();
-            res.redirect('/login');
+            res.redirect('/api/views/login');
         } catch (err) {
             res.status(500).send('Error al registrar usuario');
         }
@@ -18,7 +18,7 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     console.log(email, password)
     try {
-        const user = await user.findOne({ email });
+        const user = await User.findOne({ email });
         console.log(user)
         if (!user) return res.status(404).send('Usuario no encontrado');
         req.session.user = {
@@ -30,7 +30,12 @@ router.post('/login', async (req, res) => {
             role: user.role
         };
         console.log(req.session.user)
-        res.redirect('/profile');
+        // Redirigir basado en el rol del usuario
+        if (user.role === 'admin') {
+            return res.redirect('/api/views/realtimeProducts');
+        } else {
+            return res.redirect('/api/views/home');
+        }
 
     } catch (err) {
         res.status(500).send('Error al iniciar sesión');
@@ -39,7 +44,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.status(500).send('Error al cerrar sesión');
-        res.redirect('/login');
+        res.redirect('/api/views/login');
     });
 })
 

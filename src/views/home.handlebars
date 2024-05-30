@@ -1,4 +1,15 @@
 
+<div class="saludo">   
+    <h2>Bienvenido {{user.nombre}} {{user.apellido}} </h2>
+
+    <form action="/api/session/logout" method="POST">
+    <button type="submit" class="btnCerrar">Cerrar Sesión</button>
+</form>
+
+</div>
+
+
+
     <div class="contenedorFilter">
     <!-- Menú desplegable para filtrar por categoría -->
     <div class="sectionCategory"> 
@@ -52,4 +63,4 @@
     {{/if}}
 </div>
 
-<script src="/js/filterProducts.js"></script>
+<script src="/js/filterProduct.js"></script>

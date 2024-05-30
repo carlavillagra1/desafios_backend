@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-dotenv.config({path: path.resolve(__dirname, "../../.env")})
+const path = require('path')
+dotenv.config()
 
 
 mongoose.connect(process.env.MONGODB)
