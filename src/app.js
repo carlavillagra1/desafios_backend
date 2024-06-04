@@ -12,6 +12,8 @@ const productManagerMongo = require('./dao/productManagerMDB.js');
 const productManager = new productManagerMongo();
 const messageMongo = require('./dao/messageManagerMDB.js');
 const messageManager = new messageMongo();
+const passport = require('passport')
+const { initializePassport } = require('./config/passport.config.js')
 const dotenv = require('dotenv');
 const path = require('path')
 const session = require('express-session')
@@ -37,6 +39,11 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: process.env.MONGODB }),
     // cookie: { maxAge: 180 * 60 * 1000 } // 3 horas
 }));
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');

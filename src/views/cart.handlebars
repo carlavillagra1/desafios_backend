@@ -6,7 +6,7 @@
             {{#each cartGroupedProducts}}
                 <li>
                     <strong>Producto:</strong> {{this.title}}  <strong>Precio:</strong> ${{this.price}} <strong>Cantidad:</strong> {{this.totalQuantity}}
-                    <strong>Subtotal:</strong> {{this.subtotal}}  <button class="eliminar-producto" data-id="{{this._id}}" data-cart-id="{{../cartId}}">Eliminar</button>
+                    <strong>Subtotal:</strong> {{this.subtotal}} <button class="eliminar-producto" data-product-id="{{this._id}}" data-cart-id="{{cartId}}">Eliminar</button>
                 </li>
             {{/each}}
         {{else}}

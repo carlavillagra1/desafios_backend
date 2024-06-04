@@ -63,8 +63,10 @@ class cartManagerMongo{
                 { _id: cid },
                 { $set: { products: updatedCart.products } }
             );
+            console.log('Cart updated:', cartUpdate); // Log para verificar la actualización
             return cartUpdate;
         } catch (error) {
+            console.error('Error updating cart:', error); // Log de error
             throw new Error("Error al actualizar el carrito");
         }
     }

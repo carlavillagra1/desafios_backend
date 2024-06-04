@@ -67,6 +67,7 @@ router.delete("/:cid/product/:id", async (req, res) => {
         await cartManager.updateCart(cid, cart);
         res.send({ result: "success", message: "Producto eliminado del  carrito", payload: cart });
     } catch (error) {
+        console.error('Error deleting product from cart:', error); // Log de error
         res.status(400).json({ message: "Error al eliminar el producto del carrito", error });
     }
 });

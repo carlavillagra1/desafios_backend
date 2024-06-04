@@ -63,7 +63,8 @@ router.get('/cart', async (req, res) => {
                     title: item.product.title,
                     price: item.product.price,
                     totalQuantity: 0,
-                    subtotal: 0
+                    subtotal: 0,
+                    _id: productId // Agregar el _id del producto al objeto
                 };
             }
             acc[productId].totalQuantity += item.quantity;
@@ -79,7 +80,9 @@ router.get('/cart', async (req, res) => {
     }
 });
 
-
+router.get('/restaurar', (req,res)  =>{
+    res.render('restaurarContraseña', {style:'index.css'})
+})
 router.get('/login', isNotAuthenticated, (req, res) => {
     res.render('login', {style: 'index.css'});
 });

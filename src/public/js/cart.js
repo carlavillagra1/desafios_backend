@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.eliminar-producto').forEach(button => {
         button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-id');
+            const productId = button.getAttribute('data-product-id');
             const cartId = '6650dacf751e5e5f87b268c7' // Obtener el ID del carrito
             console.log('Product ID:', productId);
             console.log('Cart ID:', cartId);
