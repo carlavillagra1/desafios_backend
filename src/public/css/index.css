@@ -322,6 +322,7 @@
     border: none;
     font-weight: bold;
     margin: 10px;
+    text-decoration: none;
 }
 .login a{
     color: aliceblue;

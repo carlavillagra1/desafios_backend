@@ -1,12 +1,48 @@
 const passport = require('passport')
 const local = require('passport-local')
+const githubStrategy = require('passport-github2')
 const User = require('../dao/models/user.model.js')
 const { createHash, isValidPassword } = require('../public/js/utils.js')
+const dotenv = require('dotenv');
+dotenv.config()
 
 const localStrategy = local.Strategy
 
 const initializePassport = () =>{
     //estrategias
+    passport.use('github', new githubStrategy({
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: process.env.CALLBACK_URL 
+    }, async(accessToken, refreshToken, profile, done) => {
+        try {
+            console.log(profile)
+            let user = await User.findOne({email : profile._json.email})
+            if(!user){
+                let newUser ={
+                    first_name: profile._json.name,
+                    last_name: "",
+                    age: 89,
+                    email: profile._json.email,
+                    password:""
+                } 
+                let result = await User.create(newUser)
+                done(null, result)
+            }
+            else{
+                done(null, user)
+            }
+        } catch (error) {
+            done(error)
+        }
+
+    }
+    ))
+
+
+
+
+
     passport.use('register', new localStrategy(
         {passReqToCallback: true, usernameField:'email'}, async(req, username,password, done) => {
             const { nombre, apellido, email, age, role} = req.body
