@@ -20,11 +20,12 @@ const initializePassport = () =>{
             let user = await User.findOne({email : profile._json.email})
             if(!user){
                 let newUser ={
-                    first_name: profile._json.name,
-                    last_name: "",
-                    age: 89,
+                    nombre: profile._json.name.split(' ')[0], // Assuming first part of name
+                    apellido: profile._json.name.split(' ').slice(1).join(' ') || "N/A", // Rest as apellido or "N/A"
                     email: profile._json.email,
-                    password:""
+                    age: 89,
+                    password:"12345",
+                    rol: "user"
                 } 
                 let result = await User.create(newUser)
                 done(null, result)

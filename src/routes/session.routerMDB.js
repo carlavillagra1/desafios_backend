@@ -72,12 +72,12 @@ router.post('/changepassword', async (req, res) => {
 });
 
 router.get('/github', passport.authenticate('github', {scope: 'user.email'}), async(req,res) =>{
-    res.redirect('/api/views/home');
-
+    
 })
 
 router.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}), async(req,res) =>{
     req.session.user = req.user
+    res.redirect('/api/views/home');
 })
 
 
