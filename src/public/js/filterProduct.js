@@ -17,22 +17,29 @@ async function filtrarProductos(page = 1) {
         const result = await response.json();
 
         const productosContainer = document.getElementById('productos');
+        const contenedorPrincipal = document.getElementById('contenedorPrincipal');
         productosContainer.innerHTML = '';  // Limpiar contenedor
+        console.log('Datos recibidos del servidor:', result);
 
         if (result.docs.length === 0) {
+            console.log('No hay productos para mostrar');
             productosContainer.innerHTML = '<h1>No hay productos para mostrar</h1>';
+            contenedorPrincipal.classList.remove('hidden');  // Mostrar contenedor principal
             return;
         }
+        // Ocultar contenedor principal si hay productos filtrados
+        contenedorPrincipal.classList.add('hidden');
 
         // Generar HTML dinámicamente
         result.docs.forEach(producto => {
             const productDiv = document.createElement('div');
             productDiv.classList.add('carts');
 
-            const thumbnail = document.createElement('strong');
-            thumbnail.classList.add('infoFoto');
-            thumbnail.textContent = producto.thumbnail;
-            productDiv.appendChild(thumbnail);
+            const thumbnail = document.createElement('img');
+                    thumbnail.classList.add('infoFoto');
+                    thumbnail.src = producto.thumbnail[0];
+                    thumbnail.alt = producto.title;
+                    productDiv.appendChild(thumbnail);
 
             const title = document.createElement('strong');
             title.classList.add('info');
@@ -90,3 +97,4 @@ async function filtrarProductos(page = 1) {
         document.getElementById('productos').innerHTML = "<h1>Error al filtrar productos</h1>";
     }
 }
+

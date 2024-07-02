@@ -1,25 +1,37 @@
 
-<div class="saludo">   
+<div class="saludo">
+    <div class="logo">
+        <h1>ROCKIANDO SPORT</h1>
+    </div>
+    <div class="saludoPadre">
+    <div class="saludoUser">
     <h2>Bienvenido {{user.nombre}} {{user.apellido}} </h2>
+    </div>
+    <div class="boton">
+    <div class="btnCarrito">
+        <a href="/api/views/cart">Carrito</a>
+    </div>
+    <div class="btnPerfil">
+        <a href="/api/views/profile"  class="btnPerfil">Perfil</a>
+    </div>
+        <form action="/api/session/logout" method="POST">
+            <button type="submit" class="btnCerrar">Cerrar Sesión</button>
+        </form>
 
-    <form action="/api/session/logout" method="POST">
-    <button type="submit" class="btnCerrar">Cerrar Sesión</button>
-</form>
-
+    </div>
+    </div>
 </div>
 
-
-
-    <div class="contenedorFilter">
+<div class="contenedorFilter">
     <!-- Menú desplegable para filtrar por categoría -->
-    <div class="sectionCategory"> 
+    <div class="sectionCategory">
         <select id="categoria-select" onchange="filtrarProductos()" class="category">
             <option value="productos">Selecciona una categoría</option>
             <option value="mujer">Mujer</option>
             <option value="hombre">Hombre</option>
             <option value="niño">Niño</option>
         </select>
-    </div> 
+    </div>
     <div class="sectionInput">
         <p class="Limite">Limite</p>
         <input type="number" id="limit-input" placeholder="Limit" value="5" class="limit">
@@ -29,7 +41,7 @@
             <option value="desc">Mayor a menor</option>
             <option value="asc">Menor a mayor</option>
         </select>
-        <button onclick="filtrarProductos()" class="btn">Buscar</button>
+        <button onclick="filtrarProductos()" class="btnCerrar">Buscar</button>
     </div>
 </div>
 
@@ -37,12 +49,12 @@
     <!-- Aquí se mostrarán los productos filtrados -->
 </div>
 
-<div class="container">
+<div id="contenedorPrincipal" class="container">
     {{#if result.isValid}}
     <div class="contenedorCarts">
         {{#each result.docs}}
         <div class="carts">
-            <strong class="infoFoto">{{this.thumbnail}}</strong>
+            <img class="infoFoto" src="{{this.thumbnail.[0]}}" alt="{{this.title}}">
             <strong class="info">{{this.title}}</strong>
             <strong class="info">Precio: ${{this.price}}</strong>
             <a href="/api/views/productDetail/{{this._id}}" class="btnDetail">Ver detalles</a>
@@ -51,12 +63,13 @@
     </div>
     <div class="paginate">
         {{#if result.hasPrevPage}}
-        <a href="{{result.prevLink}}"><< Anterior</a>
-        {{/if}}
-        <span> Pagina {{result.page}} de {{result.totalPages}}</span> 
-        {{#if result.hasNextPage}}
-        <a href="{{result.nextLink}}">Siguiente >></a>
-        {{/if}}
+        <a href="{{result.prevLink}}">
+            << Anterior</a>
+                {{/if}}
+                <span> Pagina {{result.page}} de {{result.totalPages}}</span>
+                {{#if result.hasNextPage}}
+                <a href="{{result.nextLink}}">Siguiente >></a>
+                {{/if}}
     </div>
     {{else}}
     <h1>No hay productos para mostrar</h1>

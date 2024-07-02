@@ -1,6 +1,10 @@
+.hidden{
+    display: none;
+}
 .container{
     padding: 10px;
     height: 96vh;
+    text-align: center;
 }
 .contenedorCarts{
     display: flex;
@@ -24,6 +28,11 @@
     align-items: center;
     text-align: center;
     background: gray;
+    padding: 10px;
+    background-image: url();
+}
+.infoFoto strong{
+    font-size: 10px;
 }
 .btnDetail{
     width: 150px;
@@ -85,13 +94,33 @@
 .cartDetail{
     border: 2px solid gray;
     border-radius: 10px;
-    width: 550px;
+    width: 850px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 10px;
     justify-content: space-evenly;
     align-items: center;
     height: 450px;
+}
+.infoFotoDetail{
+    width: 300px;
+    height: 300px;
+    border-radius: 10px;
+}
+.infoD{
+    width: 300px;
+    height: 315px;
+    padding: 6px;
+    font-size: 20px;
+    align-items: center;
+    text-align: center;
+    background: gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 5px;
+    border-radius: 10px;
+    
 }
 .volver a{
     text-decoration: none;
@@ -185,13 +214,35 @@
 }
 .carrito{
     background: gray;
-    width: 800px;
+    width: 90%;
     align-items: center;
-    height: 200px;
+    height: 400px;
     color: aliceblue;
     border-radius: 10px;
     padding: 10px;
     overflow-y: scroll;
+}
+.infoFotoCart{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+.carrito li{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 10px;
+    padding: 10px;
+    align-items: center;
+    text-align: center;
+}
+.btnEliminar{
+    width: 150px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 10px;
+    background: aliceblue;
+    border: none;
 }
 .total{
     display: block;
@@ -212,15 +263,58 @@
     border-radius: 10px;
     align-items: center;
     text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
-.btnCerrar{
-    width: 200px;
+.logo{
+    color: gray;
+    font-weight: bolder;
+    letter-spacing: 2px;
+}
+
+.boton{
+    display: flex;
+    width: 500px;
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.btnPerfil{
+    width: 120px;
     padding: 10px;
     background: gray;
     color: aliceblue;
     font-weight: bold;
     border-radius: 10px;
     border: none;
+    font-size: 12px;
+    text-decoration: none;
+}
+.btnCarrito{
+    width: 120px;
+    padding: 10px;
+    background: gray;
+    color: aliceblue;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
+}
+.btnCarrito a{
+     text-decoration: none;
+     color: aliceblue;
+}
+.btnCerrar{
+    width: 120px;
+    padding: 10px;
+    background: gray;
+    color: aliceblue;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
 }
 .containerREALTIME{
     padding: 10px;
@@ -358,4 +452,17 @@
     text-decoration: none;
     color: aliceblue;
     font-weight: bold;
+}
+.perfil{
+    border: 2px solid gray;
+    width: 500px;
+    height: 500px;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }

@@ -3,9 +3,9 @@ const cartsModel  = require("./models/carts.model.js")
 
 class productManagerMongo {
 
-    async createProduct(title, description, price, thumbnail, code, stock, category) {
+    async createProduct(title, description, price, thumbnail, code, stock, categoria) {
         try {
-            const create = await productModel.create({title, description, price, thumbnail, code, stock, category})
+            const create = await productModel.create({title, description, price, thumbnail, code, stock, categoria})
             return create
         } catch (error) {
             throw new Error("Error al crear el producto")
@@ -24,7 +24,7 @@ class productManagerMongo {
 
     async getProductById(id) {
         try {
-            const productFound = await productModel.findById(id);
+            const productFound = await productModel.findById(id).lean()
             if (productFound) {
                 return productFound;
             } else {
@@ -34,7 +34,6 @@ class productManagerMongo {
             throw new Error("Error al encontrar el producto: " + error.message);
         }
     }
-    
     
     async updateProduct(id) {
         try {
@@ -91,8 +90,6 @@ class productManagerMongo {
             throw new Error("Error en paginación de productos: " + error.message);
         }
     }
-    
-    
 
     // Función para filtrar productos por categoría
     async filterCategory({ categoria, limit = 10, page = 1, sort, query }) {

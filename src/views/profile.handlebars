@@ -1,8 +1,20 @@
-<h2>Perfil de Usuario</h2>
-<p>Nombre: {{user.nombre}}</p>
-<p>Apellido: {{user.apellido}}</p>
-<p>Email: {{user.email}}</p>
-<p>Edad: {{user.age}}</p>
-<form action="/api/session/logout" method="POST">
-    <button type="submit">Cerrar Sesión</button>
-</form>
+<div class="container">
+    <div class="perfil">
+        <h2>Perfil de Usuario</h2>
+        <p>Nombre: {{user.nombre}}</p>
+        <p>Apellido: {{user.apellido}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Edad: {{user.age}}</p>
+        <form action="/api/session/logout" method="POST">
+            <button type="submit"  class="btnCerrar">Cerrar Sesión</button>
+        </form>
+            <div class="volver">
+        <a href="/api/views/home">Volver a home</a>
+    </div>
+        <div class="volver">
+        <a href="/api/views/cart">Ir al carrito</a>
+    </div>
+    </div>
+
+
+</div>
