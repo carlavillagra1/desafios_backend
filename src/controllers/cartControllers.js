@@ -89,10 +89,9 @@ exports.addProductToCart = async (req, res) => {
 exports.removeProductFromCart = async (req, res) => {
     try {
         const { cid, id } = req.params;
-        const updatedCart = await cartService.removeProductFromCart(cid, id);
-        res.status(200).json(updatedCart);
+        const cart = await cartService.removeProductFromCart(cid, id);
+        res.send({ result: "success", message: "Producto eliminado del carrito", payload: cart });
     } catch (error) {
-        console.error('Error al eliminar el producto del carrito:', error);
-        res.status(500).json({ message: 'Error al eliminar el producto del carrito' });
+        res.status(400).json({ message: "Error al eliminar el producto del carrito", error: error.message });
     }
 };

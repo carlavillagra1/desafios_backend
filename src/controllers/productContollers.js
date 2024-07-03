@@ -57,14 +57,18 @@ exports.paginateProducts = async (req, res) => {
         res.status(500).json({ message: "Error al paginar los productos: " + error.message });
     }
 };
+// productControllers.js
 exports.filterByCategory = async (req, res) => {
     const { categoria } = req.params;
     let { page, limit, sort, query } = req.query;
+
+    // Convertir page y limit a números enteros válidos
+    page = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 5;
+
     try {
-        // Convertir page y limit a números enteros válidos
-        page = parseInt(page, 10) || 1;
-        const limitNumber = parseInt(limit, 10) || 5;
-        const result = await productService.filterByCategory({ categoria, page, limit: limitNumber, sort, query });
+        const filterParams = { categoria: categoria === 'productos' ? null : categoria, page, limit: limitNumber, sort, query };
+        const result = await productService.filterByCategory(filterParams);
 
         if (result.docs.length === 0) {
             return res.status(404).json({ message: "No hay productos para mostrar controller" });
@@ -75,3 +79,4 @@ exports.filterByCategory = async (req, res) => {
         res.status(500).json({ message: "Error al filtrar los productos por categoría: " + error.message });
     }
 };
+

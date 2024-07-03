@@ -105,24 +105,25 @@ class CartService {
 
     async removeProductFromCart(cid, id) {
         try {
-            console.log(`Removing product from cart: cartId=${cid}, productId=${id}`);
             const cart = await this.getCartById(cid);
-            const product = await productManager.getProductById(id);
+            if (!cart) {
+                throw new Error("Carrito no encontrado");
+                
 
-            if (!product) {
-                throw new Error("Producto no encontrado");
             }
+            const productIndex = cart.products.findIndex(product => String(product.product._id) === String(id));
 
-            const existingProductIndex = cart.products.findIndex(p => p.product.toString() === id);
-
-            if (existingProductIndex === -1) {
-                throw new Error("Producto no encontrado en el carrito");
+            console.log('Product Index:', productIndex);
+            if (productIndex === -1) {
+                return res.status(404).json({ message: "Producto no encontrado en el carrito" });
             }
-
-            const quantity = cart.products[existingProductIndex].quantity;
-            cart.products.splice(existingProductIndex, 1);
+    
+            const product = cart.products[productIndex];
+            const quantity = product.quantity;
+            cart.products.splice(productIndex, 1);
             cart.total -= product.price * quantity;
-
+            console.log('Cart contents after removal:', JSON.stringify(cart, null, 2));
+    
             await cartManager.updateCart(cid, cart);
             return cart;
         } catch (error) {
@@ -130,6 +131,7 @@ class CartService {
             throw new Error("Error al eliminar el producto del carrito: " + error.message);
         }
     }
+    
 }
 
 module.exports = CartService;

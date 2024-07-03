@@ -91,42 +91,43 @@ class productManagerMongo {
         }
     }
 
-    // Función para filtrar productos por categoría
-    async filterCategory({ categoria, limit = 10, page = 1, sort, query }) {
-        try {
-            const match = { category: categoria };
-            if (query) {
-                match.title = { $regex: query, $options: 'i' };
-            }
-            const sortOrder = sort === 'desc' ? -1 : 1;
-            const skip = (page - 1) * limit;
-    
-            const categorias = await productModel.aggregate([
-                { $match: match },
-                { $sort: { price: sortOrder } },
-                { $skip: skip },
-                { $limit: parseInt(limit) }
-            ]);
-    
-            const totalDocs = await productModel.countDocuments(match);
-            const totalPages = Math.ceil(totalDocs / limit);
-    
-            return {
-                docs: categorias,
-                totalDocs,
-                limit,
-                page,
-                totalPages,
-                hasPrevPage: page > 1,
-                hasNextPage: page < totalPages,
-                prevPage: page > 1 ? page - 1 : null,
-                nextPage: page < totalPages ? page + 1 : null
-            };
-        } catch (error) {
-            throw new Error(`Error en filtrar por categorías: ${error.message}`);
+   // Función para filtrar productos por categoría
+async filterCategory({ categoria, limit = 10, page = 1, sort, query }) {
+    try {
+        // Si 'categoria' es null, no filtramos por categoría
+        const match = categoria ? { category: categoria } : {};
+        if (query) {
+            match.title = { $regex: query, $options: 'i' };
         }
+        const sortOrder = sort === 'desc' ? -1 : 1;
+        const skip = (page - 1) * limit;
+
+        const categorias = await productModel.aggregate([
+            { $match: match },
+            { $sort: { price: sortOrder } },
+            { $skip: skip },
+            { $limit: parseInt(limit) }
+        ]);
+
+        const totalDocs = await productModel.countDocuments(match);
+        const totalPages = Math.ceil(totalDocs / limit);
+
+        return {
+            docs: categorias,
+            totalDocs,
+            limit,
+            page,
+            totalPages,
+            hasPrevPage: page > 1,
+            hasNextPage: page < totalPages,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: page < totalPages ? page + 1 : null
+        };
+    } catch (error) {
+        throw new Error(`Error en filtrar por categorías: ${error.message}`);
     }
-    
+}
+
 }
 
 
