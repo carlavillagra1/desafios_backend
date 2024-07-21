@@ -9,6 +9,7 @@
                     <strong>Subtotal:</strong> {{this.subtotal}} <button class="btnEliminar" data-product-id="{{this._id}}" data-cart-id="{{../cartId}}">Eliminar</button>
                 </li>
             {{/each}}
+                <button  id="finalize-purchase" data-cart-id="{{cartId}}"> Finalizar compra </button>
         {{else}}
             <p>El carrito está vacío.</p>
         {{/if}}

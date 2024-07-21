@@ -1,7 +1,10 @@
-const cartManagerMongo = require("../dao/cartsManagerMDB.js");
+const cartManagerMongo = require("../dao/cartsRepository.js");
 const cartManager = new cartManagerMongo();
-const productManagerMongo = require("../dao/productManagerMDB.js");
+const productManagerMongo = require("../dao/productRepository.js");
 const productManager = new productManagerMongo();
+const TicketService = require("../services/ticketService.js");
+const ticketService = new  TicketService()
+const UserDTO = require("../dao/dto/userDTO.js")
 
 exports.home = async (req, res) => {
     try {
@@ -74,6 +77,15 @@ exports.cart = async (req, res) => {
         res.status(500).send('Error al obtener el carrito');
     }
 };
+exports.renderTicket = async (req, res, next) => {
+    try {
+        const { ticketId } = req.params;
+        const ticket = await ticketService.getTicketById(ticketId);
+        res.render('ticket', { title: 'Detalles del Ticket', ticket, style: 'index.css' });
+    } catch (error) {
+        next(new Error("Error al obtener el ticket: " + error.message));
+    }
+};
 
 exports.restaurar = (req, res) => {
     res.render('restaurarContraseña', { style: 'index.css' });
@@ -88,6 +100,7 @@ exports.register = (req, res) => {
 };
 
 exports.profile = (req, res) => {
+    const user = new UserDTO(req.session.user);
     console.log('Datos de sesión:', req.session.user);
-    res.render('profile', { style: 'index.css', user: req.session.user });
+    res.render('profile', { style: 'index.css', user });
 };

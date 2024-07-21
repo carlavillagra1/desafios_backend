@@ -1,12 +1,32 @@
+const CustomError = require('../services/errors/CustomError.js');
+const generateProductErrorInfo = require('../services/errors/info.js');
+const EErrors = require('../services/errors/enums.js');
 const ProductService = require('../services/productService.js');
 const productService = new ProductService();
 
-exports.createProduct = async (req, res) => {
+
+exports.createProduct = async (req, res, next) => {
     try {
+        let { title, description, price, thumbnail, code, stock, category } = req.body;
+
+        console.log("datos recibidos de createProduct:", req.body)
+
+        // Validación de campos
+        if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
+            console.log("datos invalidos:", req.body)
+            CustomError.createError({
+                name: 'InvalidProductError',
+                cause: generateProductErrorInfo(req.body),
+                message: 'Error al crear el producto: Información inválida',
+                code: EErrors.INVALID_TYPES_ERROR
+            });
+        }
         const newProduct = await productService.createProduct(req.body);
-        res.status(201).json(newProduct);
+        console.log("producto creado", newProduct)
+        res.send({ result: "success", payload: newProduct})
     } catch (error) {
-        res.status(500).json({ message: "Error al crear el producto: " + error.message });
+        console.log("error en createProduct", error)
+        next(error);
     }
 };
 
@@ -57,7 +77,7 @@ exports.paginateProducts = async (req, res) => {
         res.status(500).json({ message: "Error al paginar los productos: " + error.message });
     }
 };
-// productControllers.js
+
 exports.filterByCategory = async (req, res) => {
     const { categoria } = req.params;
     let { page, limit, sort, query } = req.query;

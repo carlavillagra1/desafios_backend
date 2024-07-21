@@ -1,5 +1,7 @@
 const CartService = require('../services/cartService.js');
 const cartService = new CartService();
+const TicketService = require("../services/ticketService.js");
+const ticketService = new  TicketService()
 
 exports.createCart = async (req, res) => {
     try {
@@ -93,5 +95,58 @@ exports.removeProductFromCart = async (req, res) => {
         res.send({ result: "success", message: "Producto eliminado del carrito", payload: cart });
     } catch (error) {
         res.status(400).json({ message: "Error al eliminar el producto del carrito", error: error.message });
+    }
+};
+
+exports.clearCart = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const clearedCart = await cartService.clearCartProducts(cid);
+        res.status(200).json({ message: 'Carrito vaciado con éxito', cart: clearedCart });
+    } catch (error) {
+        console.error('Error al vaciar el carrito:', error);
+        res.status(500).json({ message: 'Error al vaciar el carrito' });
+    }
+};
+
+exports.purchaseCart = async (req, res) => {
+    try {
+        if (!req.session.user || !req.session.user._id) {
+            return res.status(401).json({ message: 'Autenticación requerida' });
+        }
+        const userId = req.session.user._id;
+        const userName = req.session.user.nombre;
+        const userEmail = req.session.user.email;
+        const { cid } = req.params;
+
+        // Crear el ticket usando el servicio de tickets
+        const ticket = await ticketService.createTicket(userId, cid);
+
+        // Verificar que el ticket y sus productos estén definidos
+        if (!ticket || !ticket.cart || !ticket.cart.products) {
+            console.log("El ticket no contiene un carrito o productos válidos");
+            return res.status(400).json({ message: 'El ticket no contiene un carrito o productos válidos' });
+        }
+
+        // Crear el contenido del correo
+        const subject = `Ticket de compra: ${ticket._id}`;
+        const text = `Gracias por tu compra. Aquí tienes los detalles de tu ticket: ${JSON.stringify(ticket)}`;
+        const html = `
+            <h1>Gracias por tu compra</h1>
+            <p>Aquí tienes los detalles de tu ticket:</p>
+            <ul>
+                ${ticket.cart.products.map(p => `<li>${p.product.title} - ${p.quantity} x ${p.product.price}</li>`).join('')}
+            </ul>
+            <p>Total: ${ticket.totalAmount}</p>
+            <p>Fecha: ${ticket.createdAt}</p>
+        `;
+
+        // Enviar correo electrónico
+        await ticketService.endTicketEmail(userEmail, subject, text, html);
+
+        res.status(201).json({ message: 'Compra finalizada con éxito. Ticket creado y correo enviado', payload: ticket });
+    } catch (error) {
+        console.error('Error al realizar la compra:', error);
+        res.status(500).json({ message: 'Error al realizar la compra: ' + error.message });
     }
 };

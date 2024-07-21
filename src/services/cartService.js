@@ -1,5 +1,5 @@
-const cartManagerMongo = require("../dao/cartsManagerMDB.js");
-const productManagerMongo = require("../dao/productManagerMDB.js");
+const cartManagerMongo = require("../dao/cartsRepository.js");
+const productManagerMongo = require("../dao/productRepository.js");
 const cartManager = new cartManagerMongo();
 const productManager = new productManagerMongo();
 
@@ -131,7 +131,16 @@ class CartService {
             throw new Error("Error al eliminar el producto del carrito: " + error.message);
         }
     }
+    async clearCartProducts(cid) {
+        try {
+            return await cartManager.clearCartProducts(cid);
+        } catch (error) {
+            console.error('Error al vaciar el carrito:', error);
+            throw error;
+        }
+    }
     
 }
+
 
 module.exports = CartService;

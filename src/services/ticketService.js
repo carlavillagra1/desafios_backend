@@ -1,0 +1,86 @@
+const moment = require('moment');
+const TicketRepository = require('../dao/ticketRepository.js');
+const ticketRepository = new TicketRepository()
+const { sendTicketByEmail } = require('../public/js/ticketEmail.js'); 
+const dotenv = require('dotenv');
+dotenv.config()
+
+
+class TicketService{
+    
+    async createTicket(userId) {
+        try {
+            // Obtener usuario y carrito del usuario
+            const user = await ticketRepository.getUserCart(userId);
+            if (!user || !user.cart) {
+                throw new Error('Usuario o carrito no encontrado');
+            }
+            // Calcular el total del carrito
+            const cart = user.cart;
+            const totalAmount = cart.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    
+            // Crear el ticket usando el repositorio
+            const newTicket = await ticketRepository.createTicket(user._id, cart._id, totalAmount);
+    
+            // Populating the ticket with necessary data
+            const populatedTicket = await ticketRepository.getTicketById(newTicket._id);
+    
+            return populatedTicket;
+        } catch (error) {
+            throw new Error("Error al crear el ticket: " + error.message);
+        }
+    }
+    
+    async getFormattedTicket(ticketId) {
+        try {
+            const ticket = await ticketRepository.getTicketById(ticketId);
+    
+            return {
+                email: ticket.user.email,
+                products: ticket.cart.products.map(p => ({
+                    title: p.product.title,
+                    price: p.product.price,
+                    quantity: p.quantity
+                })),
+                totalAmount: ticket.totalAmount,
+                createdAt: moment(ticket.createdAt).format('YYYY-MM-DD HH:mm:ss')
+            };
+        } catch (error) {
+            throw new Error("Error al obtener el ticket: " + error.message);
+        }
+    }
+    
+    async  endTicketEmail(userEmail, subject, text, html) {
+        try {
+            await sendTicketByEmail(userEmail, subject, text, html); // Usa la función de enviar correo electrónico
+            console.log('Correo electrónico del ticket enviado con éxito');
+        } catch (error) {
+            console.error('Error al enviar el correo electrónico del ticket:', error);
+            throw new Error('Error al enviar el correo electrónico del ticket: ' + error.message);
+        }
+    }
+
+    async getTicketById(ticketId) {
+        try {
+            const ticket = await ticketRepository.getTicketById(ticketId);
+
+            return {
+                email: ticket.user.email,
+                products: ticket.cart.products.map(p => ({
+                    title: p.product.title,
+                    price: p.product.price,
+                    quantity: p.quantity
+                })),
+                totalAmount: ticket.totalAmount,
+                createdAt: moment(ticket.createdAt).format('YYYY-MM-DD HH:mm:ss') // Formatear la fecha
+            };
+        } catch (error) {
+            throw new Error("Error al obtener el ticket: " + error.message);
+        }
+
+    }
+
+}
+
+
+module.exports = TicketService; 

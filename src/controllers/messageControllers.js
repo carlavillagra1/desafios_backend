@@ -1,9 +1,9 @@
-const messageModel = require("../dao/models/message.model.js");
+const messageService = require("../services/messageService.js");
 
 exports.createMessage = async (req, res, next) => {
     try {
         const { user, message } = req.body;
-        const create = await messageModel.create({ user, message });
+        const create = await messageService.createMessage({ user, message });
         res.send({ result: "success", payload: create });
     } catch (error) {
         next(new Error("Error al crear el mensaje"));
@@ -12,7 +12,7 @@ exports.createMessage = async (req, res, next) => {
 
 exports.readMessages = async (req, res, next) => {
     try {
-        const messages = await messageModel.find();
+        const messages = await messageService.readMessages();
         res.send({ result: "success", payload: messages });
     } catch (error) {
         next(new Error("Error al leer los mensajes"));
@@ -22,7 +22,7 @@ exports.readMessages = async (req, res, next) => {
 exports.messageById = async (req, res, next) => {
     try {
         const { mid } = req.params;
-        const message = await messageModel.findById(mid);
+        const message = await messageService.messageById(mid);
         res.send({ result: "success", payload: message });
     } catch (error) {
         next(new Error("Error al encontrar el mensaje"));
@@ -33,7 +33,7 @@ exports.messageUpdate = async (req, res, next) => {
     try {
         const { mid } = req.params;
         const { user, message } = req.body;
-        const messageUpdate = await messageModel.findByIdAndUpdate(mid, { user, message }, { new: true });
+        const messageUpdate = await messageService.messageUpdate(mid, { user, message });
         res.send({ result: "success", payload: messageUpdate });
     } catch (error) {
         next(new Error("Error al modificar el mensaje"));
@@ -43,7 +43,7 @@ exports.messageUpdate = async (req, res, next) => {
 exports.messageDelete = async (req, res, next) => {
     try {
         const { mid } = req.params;
-        const messageDelete = await messageModel.findByIdAndDelete(mid);
+        const messageDelete = await messageService.messageDelete(mid);
         res.send({ result: "success", payload: messageDelete });
     } catch (error) {
         next(new Error("Error al eliminar el mensaje"));

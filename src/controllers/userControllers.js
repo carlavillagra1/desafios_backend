@@ -18,6 +18,7 @@ exports.login = async (req, res) => {
     if (!req.user) return res.status(400).send({status: "error", error: "Datos incompletos"});
     try {
         req.session.user = {
+            id: req.user._id,
             nombre: req.user.nombre,
             apellido: req.user.apellido,
             email: req.user.email,

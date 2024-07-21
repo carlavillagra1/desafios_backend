@@ -1,6 +1,6 @@
 const User = require("./models/user.model.js");
 
-class UserManager {
+class UserRepository {
     async createUser(userData) {
         try {
             const newUser = await User.create(userData);
@@ -43,4 +43,4 @@ class UserManager {
     }
 }
 
-module.exports = UserManager;
+module.exports = UserRepository;

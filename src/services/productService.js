@@ -1,13 +1,14 @@
-const ProductManagerMongo = require("../dao/productManagerMDB.js");
+const ProductManagerMongo = require("../dao/productRepository.js");
 const productManager = new ProductManagerMongo();
 
 class ProductService {
     async createProduct(data) {
-        const { title, description, price, thumbnail, code, stock, category } = data;
+        let { title, description, price, thumbnail, code, stock, category } = data;
         try {
             const newProduct = await productManager.createProduct(title, description, price, thumbnail, code, stock, category);
             return newProduct;
         } catch (error) {
+            console.log("Error al crear el producto: " + error.message)
             throw new Error("Error al crear el producto: " + error.message);
         }
     }

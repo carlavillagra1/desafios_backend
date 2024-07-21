@@ -7,11 +7,8 @@ const messageRouterMDB = require('./routes/message.routerMDB.js');
 const cartsRouterMDB = require('./routes/carts.routerMDB.js');
 const sessionRouter = require('./routes/session.routerMDB.js')
 const viewRouter = require('./routes/views.router.js');
+const ticketRouter = require('./routes/ticket.routerMDB.js')
 const db = require('./config/database.js')
-const productManagerMongo = require('./dao/productManagerMDB.js');
-const productManager = new productManagerMongo();
-const messageMongo = require('./dao/messageManagerMDB.js');
-const messageManager = new messageMongo();
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 const dotenv = require('dotenv');
@@ -19,11 +16,14 @@ const path = require('path')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const Server = require('socket.io');
+const initializeSocket = require('./config/socket.js'); 
+const errorHandler = require('./middlewares/index.js')
 const port = 8080;
 dotenv.config()
 
 const httpServer = app.listen(port, console.log(`Server running on port ${port}`));
-const socketServer = Server(httpServer);
+// Inicializar sockets
+initializeSocket(httpServer);
 
 const hbs = handlebars.create({
     runtimeOptions: {
@@ -53,81 +53,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
+app.use((req, res, next) => {
+    console.log('Middleware de prueba antes de productRouter');
+    next();
+});
 app.use('/api/product', productRouterMDB);
 app.use('/api/message', messageRouterMDB);
 app.use('/api/carts', cartsRouterMDB);
 app.use('/api/views', viewRouter);
 app.use('/api/session', sessionRouter);
+app.use('/api/tickets', ticketRouter)
 
-
-
-
-socketServer.on('connection', socket => {
-    console.log('Nuevo cliente conectado');
-
-    messageManager.readMessage()
-        .then((messages) => {
-            socket.emit('messages', messages);
-        });
-    socket.on('NewMessage', (user, message) => {
-        messageManager.createMessage(user, message)
-            .then(() => {
-                messageManager.readMessage()
-                    .then((messages) => {
-                        socket.emit('messages', messages);
-                        socket.emit('responseAdd', 'Mensaje enviado');
-                    });
-            })
-            .catch((error) =>
-                socket.emit('responseAdd', 'Error al enviar el mensaje' + error.message));
-    });
-    socket.on('eliminarMessage', (message) => {
-        messageManager.messageDelete(message)
-            .then(() => {
-                messageManager.readMessage()
-                    .then((messages) => {
-                        socket.emit('messages', messages);
-                        socket.emit('responseDelete', 'Mensaje eliminado');
-                    });
-            })
-            .catch((error) =>
-                socket.emit('responseDelete', 'Error al eliminar el mensaje' + error.message));
-    });
+app.use((req, res, next) => {
+    console.log('Middleware de prueba antes de errorHandler');
+    next();
 });
+app.use(errorHandler)
 
-socketServer.on('connection', socket => {
-    console.log('Nuevo cliente conectado');
 
-    productManager.readProducts()
-        .then((products) => {
-            socket.emit('products', products);
-        });
-    socket.on('NewProduct', (product) => {
-        console.log(product);
-        productManager.createProduct(
-            product.title, product.description, product.price, product.thumbnail,
-            product.code, product.stock, product.category)
-            .then(() => {
-                productManager.readProducts()
-                    .then((products) => {
-                        socket.emit('products', products);
-                        socket.emit('responseAdd', 'Producto agregado');
-                    });
-            })
-            .catch((error) =>
-                socket.emit('responseAdd', 'Error al agregar el producto' + error.message));
-    });
-
-    socket.on('eliminarProduct', product => {
-        productManager.deleteProduct(product)
-            .then(() => {
-                productManager.readProducts()
-                    .then((products) => {
-                        socket.emit('products', products);
-                        socket.emit('responseDelete', 'Producto eliminado');
-                    });
-            })
-            .catch((error) =>
-                socket.emit('responseDelete', 'Error al eliminar el producto' + error.message));
-    });
-});

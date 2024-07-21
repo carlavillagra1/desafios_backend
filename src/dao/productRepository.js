@@ -3,11 +3,12 @@ const cartsModel  = require("./models/carts.model.js")
 
 class productManagerMongo {
 
-    async createProduct(title, description, price, thumbnail, code, stock, categoria) {
+    async createProduct(title, description, price, thumbnail, code, stock, category) {
         try {
-            const create = await productModel.create({title, description, price, thumbnail, code, stock, categoria})
+            const create = await productModel.create({title, description, price, thumbnail, code, stock, category})
             return create
         } catch (error) {
+            console.log("error", error)
             throw new Error("Error al crear el producto")
         }
     }

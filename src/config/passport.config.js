@@ -83,7 +83,9 @@ const initializePassport = () =>{
                 console.log("El usuario no existe")
                 return done(null, user)
             }
-            if(!isValidPassword(user, password)) return done(null, false)
+            if (!user.comparePassword(password)) {
+                return done(null, false, { message: 'Contraseña incorrecta' });
+            }
             return done(null, user)
         } catch (error) {
             return done(error)
