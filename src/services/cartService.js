@@ -1,7 +1,12 @@
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 const cartManagerMongo = require("../dao/cartsRepository.js");
 const productManagerMongo = require("../dao/productRepository.js");
 const cartManager = new cartManagerMongo();
 const productManager = new productManagerMongo();
+const EErrors = require("../services/errors/enums.js")
+const CustomErrorCart = require("../services/errors/CustomErrorCart.js")
+const { generateCartErrorInfo } = require("../services/errors/info.js")
 
 class CartService {
     async createCart(products = [], total = 0) {
@@ -57,49 +62,44 @@ class CartService {
             throw new Error("Error al actualizar el carrito: " + error.message);
         }
     }
-
     async addProductToCart(cid, id, quantity) {
         try {
-            // Asegúrate de que quantity es un número
             quantity = Number(quantity);
             if (isNaN(quantity) || quantity <= 0) {
                 throw new Error("Cantidad inválida");
             }
-
-            // Obtener el carrito por su ID
             let cart = await cartManager.cartFindOne(cid);
             if (!cart) {
-                // Si el carrito no existe, crear uno nuevo
-                cart = await cartManager.createCart(cid); // Puedes ajustar los parámetros según sea necesario
+                cart = await cartManager.createCart(cid); 
             }
-
-            // Obtener el producto por su ID
+            if (!ObjectId.isValid(id)) {
+                CustomErrorCart.createError({
+                    name: 'InvalidProductIdError',
+                    cause: generateCartErrorInfo({cid}, {id}),
+                    message: 'ID de producto inválido',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
+            }
             const product = await productManager.getProductById(id);
             if (!product) {
-                throw new Error("Producto no encontrado");
+                CustomErrorCart.createError({
+                    name: 'ProductNotFoundError',
+                    cause: generateCartErrorInfo({cid}, {id}) ,
+                    message: 'Producto no encontrado',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
             }
-
-            // Verificar si el producto ya está en el carrito
             const existingProductIndex = cart.products.findIndex(p => p.product.toString() === id);
-
             if (existingProductIndex !== -1) {
-                // Si el producto ya está en el carrito, actualizar la cantidad
                 cart.products[existingProductIndex].quantity += quantity;
             } else {
-                // Si el producto no está en el carrito, agregarlo
                 cart.products.push({ product: id, quantity });
             }
-
-            // Calcular el nuevo total del carrito
             cart.total += product.price * quantity;
-
-            // Actualizar el carrito en la base de datos
             await cartManager.updateCart(cid, cart);
-
             return cart;
         } catch (error) {
-            console.error(`Error adding product to cart: ${error.message}`);
-            throw new Error("Error al agregar el producto al carrito: " + error.message);
+            throw error;
         }
     }
 
@@ -107,15 +107,21 @@ class CartService {
         try {
             const cart = await this.getCartById(cid);
             if (!cart) {
-                throw new Error("Carrito no encontrado");
-                
-
+                CustomErrorCart.createError({
+                    name: 'CartNotFoundError',
+                    cause: generateCartErrorInfo({cid}) ,
+                    message: 'Carrito no encontrado',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
             }
             const productIndex = cart.products.findIndex(product => String(product.product._id) === String(id));
-
-            console.log('Product Index:', productIndex);
             if (productIndex === -1) {
-                return res.status(404).json({ message: "Producto no encontrado en el carrito" });
+                CustomErrorCart.createError({
+                    name: 'ProductNotFoundError',
+                    cause: generateCartErrorInfo({cid}, {id}) ,
+                    message: 'Producto no encontrado en el carrito',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
             }
     
             const product = cart.products[productIndex];
@@ -127,7 +133,6 @@ class CartService {
             await cartManager.updateCart(cid, cart);
             return cart;
         } catch (error) {
-            console.error(`Error removing product from cart: ${error.message}`);
             throw new Error("Error al eliminar el producto del carrito: " + error.message);
         }
     }
@@ -135,12 +140,9 @@ class CartService {
         try {
             return await cartManager.clearCartProducts(cid);
         } catch (error) {
-            console.error('Error al vaciar el carrito:', error);
             throw error;
         }
     }
     
 }
-
-
 module.exports = CartService;

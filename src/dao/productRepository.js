@@ -1,15 +1,29 @@
 const productModel = require("./models/product.model.js")
 const cartsModel  = require("./models/carts.model.js")
+const CustomError = require('../services/errors/CustomError.js');
+const { generateProductErrorInfo } = require('../services/errors/info.js');
+const EErrors = require('../services/errors/enums.js');
 
 class productManagerMongo {
 
     async createProduct(title, description, price, thumbnail, code, stock, category) {
         try {
-            const create = await productModel.create({title, description, price, thumbnail, code, stock, category})
-            return create
+            if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
+                CustomError.createError({
+                    name: 'InvalidProductError',
+                    cause: generateProductErrorInfo({ title, description, price, thumbnail, code, stock, category }),
+                    message: 'Error al crear el producto: Información inválida',
+                    code: EErrors.INVALID_TYPES_ERROR
+                });
+            }
+            const create = await productModel.create({ title, description, price, thumbnail, code, stock, category });
+            return create;
         } catch (error) {
-            console.log("error", error)
-            throw new Error("Error al crear el producto")
+            if (error instanceof CustomError) {
+                throw error;
+            } else {
+                throw new Error("Error al crear el producto: " + error.message);
+            }
         }
     }
 
@@ -18,6 +32,7 @@ class productManagerMongo {
             const products = await productModel.find().lean()
             return products
         } catch (error) {
+            console.log('Error al obtener los productos en el repositorio:', error); // Agrega logs para depuración
             throw new Error("Error al leer los productos")
 
         }

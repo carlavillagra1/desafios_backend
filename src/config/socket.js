@@ -3,6 +3,7 @@ const MessageRepository = require('../dao/messageRepository.js');
 const ProductRepository = require('../dao/productRepository.js');
 const messageManager = new MessageRepository();
 const productManager = new ProductRepository();
+const CustomError = require('../services/errors/CustomError.js');
 
 const initializeSocket = (httpServer) => {
     const io = new Server(httpServer);
@@ -46,7 +47,6 @@ const initializeSocket = (httpServer) => {
                 socket.emit('products', products);
             });
         socket.on('NewProduct', (product) => {
-            console.log(product);
             productManager.createProduct(
                 product.title, product.description, product.price, product.thumbnail,
                 product.code, product.stock, product.category)
@@ -57,8 +57,14 @@ const initializeSocket = (httpServer) => {
                             socket.emit('responseAdd', 'Producto agregado');
                         });
                 })
-                .catch((error) =>
-                    socket.emit('responseAdd', 'Error al agregar el producto: ' + error.message));
+                .catch((error) => {
+                    console.log("error al agregar el poducto", error)
+                    if (error instanceof CustomError) {
+                        socket.emit('error', { status: 'error', error: error.name, message: error.message, cause: error.cause });
+                    } else {
+                        socket.emit('error', { status: 'error', message: error.message });
+                    }
+                });
         });
 
         socket.on('eliminarProduct', product => {

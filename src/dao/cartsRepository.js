@@ -71,12 +71,12 @@ class cartRepository{
 
     async clearCartProducts(cid) {
         try {
-            const cart = await cartsModel.findById(cid) // Asegúrate de que sea un documento de Mongoose
+            const cart = await cartsModel.findById(cid) 
             if (!cart) {
                 throw new Error('Carrito no encontrado');
             }
-            cart.products = [];  // Vacía los productos del carrito
-            await cart.save();  // Guarda los cambios
+            cart.products = []; 
+            await cart.save();  
             return cart;
         } catch (error) {
             console.error('Error al vaciar el carrito:', error);

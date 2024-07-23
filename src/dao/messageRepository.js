@@ -12,7 +12,7 @@ class MessageRepository {
 
     async readMessage() {
         try {
-            const messages = await messageModel.find();
+            const messages = await messageModel.find().lean()
             return messages;
         } catch (error) {
             throw new Error("Error al leer los mensajes: " + error.message);

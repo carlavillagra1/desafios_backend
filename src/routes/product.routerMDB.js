@@ -4,7 +4,6 @@ const productController = require('../controllers/productControllers.js');
 const { isAuthenticated, isAdmin, isUser } = require('../public/js/auth.js');
 
 
-
 router.post('/', isAuthenticated, isAdmin, productController.createProduct);
 router.get('/', isAuthenticated, isUser, productController.getAllProducts);
 router.get('/:id', isAuthenticated, isUser, productController.getProductById);

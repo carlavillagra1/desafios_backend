@@ -1,5 +1,5 @@
 const CustomError = require('../services/errors/CustomError.js');
-const generateProductErrorInfo = require('../services/errors/info.js');
+const { generateProductErrorInfo } = require('../services/errors/info.js');
 const EErrors = require('../services/errors/enums.js');
 const ProductService = require('../services/productService.js');
 const productService = new ProductService();
@@ -8,12 +8,8 @@ const productService = new ProductService();
 exports.createProduct = async (req, res, next) => {
     try {
         let { title, description, price, thumbnail, code, stock, category } = req.body;
-
-        console.log("datos recibidos de createProduct:", req.body)
-
         // Validación de campos
         if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
-            console.log("datos invalidos:", req.body)
             CustomError.createError({
                 name: 'InvalidProductError',
                 cause: generateProductErrorInfo(req.body),
@@ -22,7 +18,6 @@ exports.createProduct = async (req, res, next) => {
             });
         }
         const newProduct = await productService.createProduct(req.body);
-        console.log("producto creado", newProduct)
         res.send({ result: "success", payload: newProduct})
     } catch (error) {
         console.log("error en createProduct", error)
@@ -35,7 +30,7 @@ exports.getAllProducts = async (req, res) => {
         const products = await productService.getAllProducts();
         res.status(200).json(products);
     } catch (error) {
-        res.status(500).json({ message: "Error al obtene os productos: " + error.message });
+        res.status(500).json({ message: "Error al obtener los productos: " + error.message });
     }
 };
 

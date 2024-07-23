@@ -78,3 +78,9 @@ socket.on('responseEdit', mensajeResponse => {
     <strong> ${mensajeResponse} </strong>`;
     ListProducts.appendChild(mensaje);
 });
+// Manejo de errores
+socket.on('error', error => {
+    console.error('Error:', error);
+    mensaje.innerHTML = `<strong>Error: ${error.message}</strong>`;
+    ListProducts.appendChild(mensaje);
+});

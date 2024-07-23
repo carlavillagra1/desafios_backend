@@ -8,10 +8,12 @@ const cartsRouterMDB = require('./routes/carts.routerMDB.js');
 const sessionRouter = require('./routes/session.routerMDB.js')
 const viewRouter = require('./routes/views.router.js');
 const ticketRouter = require('./routes/ticket.routerMDB.js')
+const mockingRouter = require("./routes/mocking.router.js")
 const db = require('./config/database.js')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
 const dotenv = require('dotenv');
+const  { faker } = require("@faker-js/faker")
 const path = require('path')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
@@ -52,22 +54,15 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
-app.use((req, res, next) => {
-    console.log('Middleware de prueba antes de productRouter');
-    next();
-});
 app.use('/api/product', productRouterMDB);
 app.use('/api/message', messageRouterMDB);
 app.use('/api/carts', cartsRouterMDB);
 app.use('/api/views', viewRouter);
 app.use('/api/session', sessionRouter);
-app.use('/api/tickets', ticketRouter)
+app.use('/api/tickets', ticketRouter);
+app.use('/api/mocking', mockingRouter)
 
-app.use((req, res, next) => {
-    console.log('Middleware de prueba antes de errorHandler');
-    next();
-});
+
 app.use(errorHandler)
 
 
