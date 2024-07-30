@@ -5,22 +5,23 @@ require('dotenv').config();
 // Definir niveles de log personalizados
 const customLevels = {
     levels: {
-        debug: 0,
-        http: 1,
-        info: 2,
-        warning: 3,
-        error: 4,
-        fatal: 5,
+        fatal: 0,
+        error: 1,
+        warning: 2,
+        info: 3,
+        http: 4,
+        debug: 5,
     },
     colors: {
-        debug: 'cyan',
-        http: 'blue',
-        info: 'green',
+        fatal: 'white',
+        error: 'red',
         warning: 'yellow',
-        error: 'orange',
-        fatal: 'red',
+        info: 'blue',
+        http: 'green',
+        debug: 'magenta',
     },
 };
+winston.addColors(customLevels.colors)
 
 // Crear logger para desarrollo
 const devLogger = winston.createLogger({
@@ -30,7 +31,7 @@ const devLogger = winston.createLogger({
             level: 'debug',
             format: winston.format.combine(
                 winston.format.timestamp(),
-                winston.format.colorize({colors: customLevels.colors}),
+                winston.format.colorize(),
                 winston.format.printf(({ timestamp, level, message }) => {
                     return `${timestamp} [${level}]: ${message}`;
                 })
@@ -48,10 +49,12 @@ const prodLogger = winston.createLogger({
     ),
     transports: [
         new winston.transports.Console({
-            level: 'info', // Mostrar info y niveles superiores en consola
+            level: 'info', 
             format: winston.format.combine(
                 winston.format.colorize(),
-                winston.format.simple()
+                winston.format.printf(({ timestamp, level, message }) => {
+                    return `${timestamp} [${level}]: ${message}`;
+                })
             )
         }),
         new winston.transports.File({
@@ -68,6 +71,6 @@ const prodLogger = winston.createLogger({
 
 // Seleccionar el logger basado en el entorno
 const logger = process.env.NODE_ENV === 'production' ? prodLogger : devLogger;
-console.log('Logger en uso:', process.env.NODE_ENV === 'production' ? 'Producción' : 'Desarrollo');
+
 
 module.exports = logger;
