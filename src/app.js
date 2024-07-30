@@ -9,6 +9,7 @@ const sessionRouter = require('./routes/session.routerMDB.js')
 const viewRouter = require('./routes/views.router.js');
 const ticketRouter = require('./routes/ticket.routerMDB.js')
 const mockingRouter = require("./routes/mocking.router.js")
+const loggerRouter = require('./routes/loggerTest.router.js')
 const db = require('./config/database.js')
 const passport = require('passport')
 const { initializePassport } = require('./config/passport.config.js')
@@ -20,6 +21,7 @@ const MongoStore = require('connect-mongo')
 const Server = require('socket.io');
 const initializeSocket = require('./config/socket.js'); 
 const errorHandler = require('./middlewares/index.js')
+const logger = require('./utils/logger.js')
 const port = 8080;
 dotenv.config()
 
@@ -61,8 +63,9 @@ app.use('/api/views', viewRouter);
 app.use('/api/session', sessionRouter);
 app.use('/api/tickets', ticketRouter);
 app.use('/api/mocking', mockingRouter)
-
+app.use('/api/logger', loggerRouter)
 
 app.use(errorHandler)
 
+console.log(`Entorno actual: ${process.env.NODE_ENV}`);
 

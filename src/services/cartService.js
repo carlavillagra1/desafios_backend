@@ -7,13 +7,16 @@ const productManager = new productManagerMongo();
 const EErrors = require("../services/errors/enums.js")
 const CustomErrorCart = require("../services/errors/CustomErrorCart.js")
 const { generateCartErrorInfo } = require("../services/errors/info.js")
+const logger  = require('../utils/logger.js')
 
 class CartService {
     async createCart(products = [], total = 0) {
         try {
             const newCart = await cartManager.createCart(products, total);
+            logger.info('Carrito creado con exito')
             return newCart;
         } catch (error) {
+            logger.error('Error al crear el carrito' + error.message)
             throw new Error("Error al crear el carrito: " + error.message);
         }
     }
@@ -21,8 +24,10 @@ class CartService {
     async getAllCarts() {
         try {
             const carts = await cartManager.readCarts();
+            logger.info('Carritos leidos con exito')
             return carts;
         } catch (error) {
+            logger.error('Error al leer los carritos' + error.message)
             throw new Error("Error al leer los carritos: " + error.message);
         }
     }
@@ -30,8 +35,10 @@ class CartService {
     async getCartById(cid) {
         try {
             const cart = await cartManager.cartById(cid);
+            logger.info('Carrito encontrado', {cid})
             return cart;
-        } catch (error) {
+        } catch (error) { 
+            logger.error('Error al encontrar el carrito' + error.message)
             throw new Error("Error al encontrar el carrito: " + error.message);
         }
     }
@@ -39,8 +46,10 @@ class CartService {
     async getCartByUserId(userId) {
         try {
             const cart = await cartManager.cartFindOne(userId);
+            logger.info('Carrito del usuario encontrado con exito')
             return cart;
         } catch (error) {
+            logger.error('Error al encontrar el carrito del usuario' + error.message)
             throw new Error("Error al encontrar el carrito del usuario: " + error.message);
         }
     }
@@ -48,8 +57,10 @@ class CartService {
     async deleteCart(cid) {
         try {
             const cartDelete = await cartManager.deleteCart(cid);
+            logger.info('Carrito eliminado con exito', {cid})
             return cartDelete;
         } catch (error) {
+            logger.error('Error al eliminar el carrito' + error.message)
             throw new Error("Error al eliminar el carrito: " + error.message);
         }
     }
@@ -57,8 +68,10 @@ class CartService {
     async updateCart(cid, updatedCart) {
         try {
             const cartUpdate = await cartManager.updateCart(cid, updatedCart);
+            logger.info('Carrito actualizado con exito')
             return cartUpdate;
         } catch (error) {
+            logger.error('Error al actualizar el carrito' + error.message)
             throw new Error("Error al actualizar el carrito: " + error.message);
         }
     }
@@ -66,6 +79,7 @@ class CartService {
         try {
             quantity = Number(quantity);
             if (isNaN(quantity) || quantity <= 0) {
+                logger.error('Cantidad invalida')
                 throw new Error("Cantidad inválida");
             }
             let cart = await cartManager.cartFindOne(cid);
@@ -99,6 +113,7 @@ class CartService {
             await cartManager.updateCart(cid, cart);
             return cart;
         } catch (error) {
+            logger.error('Error al agregar el producto al carrito' + error.message)
             throw error;
         }
     }
@@ -133,13 +148,16 @@ class CartService {
             await cartManager.updateCart(cid, cart);
             return cart;
         } catch (error) {
+            logger.error('Error al eliminar el producto del carrito' + error.message)
             throw new Error("Error al eliminar el producto del carrito: " + error.message);
         }
     }
     async clearCartProducts(cid) {
         try {
             return await cartManager.clearCartProducts(cid);
+            logger.info('Carrito vaciado con exito')
         } catch (error) {
+            logger.error('Error al vaciar el carrito' + error.message)
             throw error;
         }
     }

@@ -5,6 +5,7 @@ const productManager = new productManagerMongo();
 const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
 const UserDTO = require("../dao/dto/userDTO.js")
+const logger = require('../utils/logger.js')
 
 exports.home = async (req, res) => {
     try {
@@ -21,6 +22,7 @@ exports.home = async (req, res) => {
 
         res.render("home", { result, user: req.session.user, style: 'index.css' });
     } catch (error) {
+        logger.error('Error al obtener los productos' + error.message)
         res.status(500).json({ message: "Error al obtener los productos: " + error.message });
     }
 };
@@ -30,9 +32,13 @@ exports.productDetail = async (req, res) => {
         const { id } = req.params;
         const user = req.user;
         const product = await productManager.getProductById(id);
-        if (product) res.render("productDetail", { user, product, style: "index.css" });
-        else res.status(404).send('Producto no encontrado');
+        if (!product) {
+            logger.warning('Producto no encontrado', { id });
+            return res.status(404).send('Producto no encontrado');
+        }
+        res.render("productDetail", { user, product, style: "index.css" });
     } catch (error) {
+        logger.error('Error al obtener el producto' + error.message)
         res.status(404).send('Producto no encontrado');
     }
 };
@@ -49,7 +55,12 @@ exports.cart = async (req, res) => {
     try {
         const cartId = req.user.cart;
         const cart = await cartManager.cartFindOne(cartId);
+        if (!req.user || !req.user.cart) {
+            logger.warning('Intento de acceso al carrito sin autenticación', { user: req.user });
+            return res.status(401).send('Autenticación requerida para ver el carrito');
+        }
         if (!cart || !cart.products || cart.products.length === 0) {
+            logger.warning('El carrito está vacío', { cartId });
             return res.render('cart', { cartGroupedProducts: [], total: 0, style: 'index.css' });
         }
         const validProducts = cart.products.filter(item => item.product !== null);
@@ -73,7 +84,7 @@ exports.cart = async (req, res) => {
         const total = cartGroupedProducts.reduce((acc, item) => acc + item.subtotal, 0);
         res.render('cart', { cartGroupedProducts, cartId, total, style: 'index.css' });
     } catch (error) {
-        console.error(error);
+        logger.error('Error al obtener el carrito' + error.message)
         res.status(500).send('Error al obtener el carrito');
     }
 };
@@ -83,6 +94,7 @@ exports.renderTicket = async (req, res, next) => {
         const ticket = await ticketService.getTicketById(ticketId);
         res.render('ticket', { title: 'Detalles del Ticket', ticket, style: 'index.css' });
     } catch (error) {
+        logger.error('Error al obtener el ticket' + error.message)
         next(new Error("Error al obtener el ticket: " + error.message));
     }
 };

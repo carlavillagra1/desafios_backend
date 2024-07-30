@@ -1,9 +1,6 @@
 const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
 
-
-
-
 exports.getTicketById = async (req, res, next) => {
     try {
         const { ticketId } = req.params;

@@ -2,14 +2,16 @@ const CartService = require('../services/cartService.js');
 const cartService = new CartService();
 const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
+const logger = require('../utils/logger.js')
 
 exports.createCart = async (req, res) => {
     try {
         const { products, total } = req.body;
         const newCart = await cartService.createCart(products, total);
+        logger.info('Carrito creado con exito')
         res.status(201).json(newCart);
     } catch (error) {
-        console.error('Error al crear el carrito:', error);
+        logger.error('Error al crear el carrito:'+ error.message );
         res.status(500).json({ message: 'Error al crear el carrito' });
     }
 };
@@ -17,9 +19,10 @@ exports.createCart = async (req, res) => {
 exports.getAllCarts = async (req, res) => {
     try {
         const carts = await cartService.getAllCarts();
+        logger.info('Carritos leidos con exito')
         res.status(200).json(carts);
     } catch (error) {
-        console.error('Error al leer los carritos:', error);
+        logger.error('Error al leer los carritos:' + error.message);
         res.status(500).json({ message: 'Error al leer los carritos' });
     }
 };
@@ -28,9 +31,13 @@ exports.getCartById = async (req, res) => {
     try {
         const { id } = req.params;
         const cart = await cartService.getCartById(id);
+        if (!cart) {
+            logger.warning('Carrito no encontrado', { id });
+            return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
         res.status(200).json(cart);
     } catch (error) {
-        console.error('Error al encontrar el carrito:', error);
+        logger.error('Error al encontrar el carrito:' + error.message);
         res.status(500).json({ message: 'Error al encontrar el carrito' });
     }
 };
@@ -39,9 +46,12 @@ exports.getCartByUserId = async (req, res) => {
     try {
         const { userId } = req.params;
         const cart = await cartService.getCartByUserId(userId);
-        res.status(200).json(cart);
+        if (!cart) {
+            logger.warning('Carrito del usuario no encontrado', { id });
+            return res.status(404).json({ message: 'Carrito del usuario no encontrado' });
+        }
     } catch (error) {
-        console.error('Error al encontrar el carrito del usuario:', error);
+        logger.error('Error al encontrar el carrito del usuario:' + error.message);
         res.status(500).json({ message: 'Error al encontrar el carrito del usuario' });
     }
 };
@@ -50,9 +60,10 @@ exports.deleteCart = async (req, res) => {
     try {
         const { id } = req.params;
         const deletedCart = await cartService.deleteCart(id);
+        logger.info('Carrito eliminado con exito')
         res.status(200).json(deletedCart);
     } catch (error) {
-        console.error('Error al eliminar el carrito:', error);
+        logger.error('Error al eliminar el carrito:' + error.message);
         res.status(500).json({ message: 'Error al eliminar el carrito' });
     }
 };
@@ -73,17 +84,16 @@ exports.addProductToCart = async (req, res) => {
     try {
         const { cid, id } = req.params;
         let { quantity } = req.body;
-        console.log(`Received parameters: cartId=${cid}, productId=${id}, quantity=${quantity}`);
-        console.log(`Body: ${JSON.stringify(req.body)}`);
         // Si quantity no está definido, establece un valor predeterminado de 1
         quantity = quantity ? Number(quantity) : 1;
         if (!quantity || isNaN(quantity) || quantity <= 0) {
+            logger.warning('Intento de agregar una cantidad inválida al carrito', { quantity });
             return res.status(400).send('Cantidad inválida');
         }
         const cart = await cartService.addProductToCart(cid, id, quantity);
         res.redirect(`/api/views/cart?cid=${cid}`);
     } catch (error) {
-        console.error('Error adding product to cart:', error.message);
+        logger.error('Error al agregar el producto al carrito:', error.message);
         res.status(500).send('Error al agregar el producto al carrito: ' + error.message);
     }
 };
@@ -92,8 +102,10 @@ exports.removeProductFromCart = async (req, res) => {
     try {
         const { cid, id } = req.params;
         const cart = await cartService.removeProductFromCart(cid, id);
+        logger.info('Producto eliminado del carrito')
         res.send({ result: "success", message: "Producto eliminado del carrito", payload: cart });
     } catch (error) {
+        logger.error('Error al eliminar el producto del carrito' + error.message)
         res.status(400).json({ message: "Error al eliminar el producto del carrito", error: error.message });
     }
 };
@@ -102,9 +114,10 @@ exports.clearCart = async (req, res) => {
     try {
         const { cid } = req.params;
         const clearedCart = await cartService.clearCartProducts(cid);
+        logger.info('Carrito vaciado con exito')
         res.status(200).json({ message: 'Carrito vaciado con éxito', cart: clearedCart });
     } catch (error) {
-        console.error('Error al vaciar el carrito:', error);
+        logger.error('Error al vaciar el carrito:' + error.message);
         res.status(500).json({ message: 'Error al vaciar el carrito' });
     }
 };
@@ -112,10 +125,10 @@ exports.clearCart = async (req, res) => {
 exports.purchaseCart = async (req, res) => {
     try {
         if (!req.session.user || !req.session.user._id) {
+            logger.warning('Intento de compra sin autenticación', { user: req.session.user });
             return res.status(401).json({ message: 'Autenticación requerida' });
         }
         const userId = req.session.user._id;
-        const userName = req.session.user.nombre;
         const userEmail = req.session.user.email;
         const { cid } = req.params;
 
@@ -124,10 +137,9 @@ exports.purchaseCart = async (req, res) => {
 
         // Verificar que el ticket y sus productos estén definidos
         if (!ticket || !ticket.cart || !ticket.cart.products) {
-            console.log("El ticket no contiene un carrito o productos válidos");
+            logger.error("El ticket no contiene un carrito o productos válidos");
             return res.status(400).json({ message: 'El ticket no contiene un carrito o productos válidos' });
         }
-
         // Crear el contenido del correo
         const subject = `Ticket de compra: ${ticket._id}`;
         const text = `Gracias por tu compra. Aquí tienes los detalles de tu ticket: ${JSON.stringify(ticket)}`;
@@ -146,7 +158,7 @@ exports.purchaseCart = async (req, res) => {
 
         res.status(201).json({ message: 'Compra finalizada con éxito. Ticket creado y correo enviado', payload: ticket });
     } catch (error) {
-        console.error('Error al realizar la compra:', error);
+        logger.error('Error al realizar la compra:' + error.message);
         res.status(500).json({ message: 'Error al realizar la compra: ' + error.message });
     }
 };
