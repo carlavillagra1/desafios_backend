@@ -116,3 +116,19 @@ exports.profile = (req, res) => {
     console.log('Datos de sesión:', req.session.user);
     res.render('profile', { style: 'index.css', user });
 };
+
+// Vista para solicitar el restablecimiento de contraseña
+exports.requestPasswordReset = (req, res) => {
+    res.render('ReestablecerPorLink', { style: 'index.css' });
+};
+
+// Vista para restablecer la contraseña usando el token
+exports.resetPassword = (req, res) => {
+    const { token } = req.query;
+    res.render('ReestablecerContraseñaJWT', { token, style: 'index.css' });
+};
+
+// Vista para el caso en que el enlace ha expirado
+exports.resetLinkExpired = (req, res) => {
+    res.render('ResetLinkExpired', { style: 'index.css' });
+};

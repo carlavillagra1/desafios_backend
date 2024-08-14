@@ -6,18 +6,33 @@ const EErrors = require('../services/errors/enums.js');
 
 class productManagerMongo {
 
-    async createProduct(title, description, price, thumbnail, code, stock, category) {
+    async createProduct(title, description, price, thumbnail, code, stock, category, user) {
         try {
             if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
-                CustomError.createError({
+                throw new CustomError({
                     name: 'InvalidProductError',
                     cause: generateProductErrorInfo({ title, description, price, thumbnail, code, stock, category }),
                     message: 'Error al crear el producto: Información inválida',
                     code: EErrors.INVALID_TYPES_ERROR
                 });
             }
-            const create = await productModel.create({ title, description, price, thumbnail, code, stock, category });
-            return create;
+    
+            if (user.role !== 'premium') {
+                throw new Error('Only premium users can create products.');
+            }
+    
+            const newProduct = await productModel.create({
+                title,
+                description,
+                price,
+                thumbnail,
+                code,
+                stock,
+                category,
+                owner: user.email  // Guardamos el correo electrónico del usuario premium
+            });
+    
+            return newProduct;
         } catch (error) {
             if (error instanceof CustomError) {
                 throw error;
@@ -26,13 +41,13 @@ class productManagerMongo {
             }
         }
     }
+    
 
     async readProducts() {
         try {
             const products = await productModel.find().lean()
             return products
         } catch (error) {
-            console.log('Error al obtener los productos en el repositorio:', error); // Agrega logs para depuración
             throw new Error("Error al leer los productos")
 
         }
@@ -60,14 +75,26 @@ class productManagerMongo {
 
         }
     }
-    async deleteProduct(id) {
+    async deleteProduct(id, user) {
         try {
-            const productDelete = await productModel.deleteOne({_id: id})
-            return productDelete
+            const product = await productModel.findById(id);
+    
+            if (!product) {
+                throw new Error("El producto no pudo ser encontrado");
+            }
+    
+            if (user.role !== 'admin' && product.owner !== user.email) {
+                throw new Error('No tienes permiso para eliminar este producto.');
+            }
+    
+            await product.remove();
+            return { message: 'Producto eliminado exitosamente' };
         } catch (error) {
-            throw new Error("Error al eliminar el producto")
+            throw new Error("Error al eliminar el producto: " + error.message);
         }
     }
+    
+    
     async  paginateProduct({ page = 1, limit = 5, sort = '', query = '', categoria = '' }) {
         try {
             const match = {};

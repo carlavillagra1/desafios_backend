@@ -1,4 +1,4 @@
-const UserManager = require('../dao/userManagerMDB.js');
+const UserManager = require('../dao/userManager.js');
 const userManager = new UserManager();
 const logger = require('../utils/logger.js')
 

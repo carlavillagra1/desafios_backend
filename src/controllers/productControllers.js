@@ -4,12 +4,17 @@ const EErrors = require('../services/errors/enums.js');
 const ProductService = require('../services/productService.js');
 const productService = new ProductService();
 const logger = require('../utils/logger.js')
+const { getUserOwner } = require('../public/js/auth.js')
 
 
 exports.createProduct = async (req, res, next) => {
     try {
+        // Obtener el owner (email o ID del usuario autenticado)
+        const owner = getUserOwner(req);
+        // Destructurar los datos del cuerpo de la solicitud
         let { title, description, price, thumbnail, code, stock, category } = req.body;
-        // Validación de campos
+        
+        // Validación de campos obligatorios
         if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
             logger.warning('Intento de creación de producto con datos incompletos', { requestData: req.body });
             CustomError.createError({
@@ -19,13 +24,25 @@ exports.createProduct = async (req, res, next) => {
                 code: EErrors.INVALID_TYPES_ERROR
             });
         }
-        const newProduct = await productService.createProduct(req.body);
-        res.send({ result: "success", payload: newProduct})
+        // Crear el producto incluyendo el owner
+        const newProduct = await productService.createProduct({
+            title,
+            description,
+            price,
+            thumbnail,
+            code,
+            stock,
+            category,
+            owner // Añadir el owner al cuerpo de la solicitud
+        });
+        // Responder con éxito
+        res.send({ result: "success", payload: newProduct });
     } catch (error) {
-        logger.error("Error al crear el producto" + error.message)
+        logger.error("Error al crear el producto: " + error.message);
         next(error);
     }
 };
+
 
 exports.getAllProducts = async (req, res) => {
     try {

@@ -1,18 +1,20 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt')
 const Cart = require('./carts.model.js')
+const {createHash} = require('../../public/js/utils.js')
 
 const userCollection = "Users";
 
 const userSchema = new mongoose.Schema({
-    nombre: { type: String,  required: true},
-    apellido: {type: String, required: true },
+    nombre: { type: String, required: true },
+    apellido: { type: String, required: true },
     email: { type: String, unique: true, required: true },
-    age: {type: Number},
+    age: { type: Number },
     password: { type: String, required: true },
-    role: { type: String, enum: ['admin', 'user'], default: 'user' },
+    role: { type: String, enum: ['admin', 'user', 'premium'], default: 'user' },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'carts' }
 });
+
 
 
 userSchema.pre('save', async function (next) {
@@ -33,20 +35,16 @@ userSchema.pre('save', async function (next) {
     }
 });
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (err) {
-        next(err);
+    const user = this
+    if (user.isModified('password') && user.password) {
+        user.password = await bcrypt.hash(user.password, 10)
     }
-});
+    next()
+})
 
-userSchema.methods.comparePassword = function (candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
-};
-
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password)
+}
 
 const userModel = mongoose.model(userCollection, userSchema);
 

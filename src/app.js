@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const handlebars = require('express-handlebars');
+const Handlebars = require('handlebars'); // Importa Handlebars para registrar el helper
 const productRouterMDB = require('./routes/product.routerMDB.js');
 const messageRouterMDB = require('./routes/message.routerMDB.js');
 const cartsRouterMDB = require('./routes/carts.routerMDB.js');
@@ -22,6 +23,8 @@ const Server = require('socket.io');
 const initializeSocket = require('./config/socket.js'); 
 const errorHandler = require('./middlewares/index.js')
 const logger = require('./utils/logger.js')
+const swaggerUiExpress = require('swagger-ui-express')
+const swaggerJsDoc = require('swagger-jsdoc')
 const port = 8080;
 dotenv.config()
 
@@ -30,11 +33,19 @@ const httpServer = app.listen(port, console.log(`Server running on port ${port}`
 initializeSocket(httpServer);
 
 const hbs = handlebars.create({
+
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true,
     }
 });
+// Registrar el helper `eq`
+Handlebars.registerHelper('eq', function (a, b) {
+    return a === b;
+});
+
+
+initializePassport()
 
 app.use(session({
     secret: 'secretkey',
@@ -43,8 +54,19 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: process.env.MONGODB }),
     // cookie: { maxAge: 180 * 60 * 1000 } // 3 horas
 }));
+const swaggerOptions = {
+    definition:{
+        openapi:'3.0.1',
+        info:{
+            title:"Documentacion",
+            description:"Api clase swagger",
+        },
+    },
+    apis:[`src/docs/**/*.yaml`],
+}
+const specs = swaggerJsDoc(swaggerOptions);
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
-initializePassport()
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -67,5 +89,6 @@ app.use('/api/logger', loggerRouter)
 
 app.use(errorHandler)
 
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 console.log(`Entorno actual: ${process.env.NODE_ENV}`);
 

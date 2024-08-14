@@ -75,17 +75,19 @@ class CartService {
             throw new Error("Error al actualizar el carrito: " + error.message);
         }
     }
-    async addProductToCart(cid, id, quantity) {
+    async addProductToCart(cid, id, quantity, user) {
         try {
             quantity = Number(quantity);
             if (isNaN(quantity) || quantity <= 0) {
-                logger.error('Cantidad invalida')
+                logger.error('Cantidad invalida');
                 throw new Error("Cantidad inválida");
             }
+    
             let cart = await cartManager.cartFindOne(cid);
             if (!cart) {
-                cart = await cartManager.createCart(cid); 
+                cart = await cartManager.createCart(cid);
             }
+    
             if (!ObjectId.isValid(id)) {
                 CustomErrorCart.createError({
                     name: 'InvalidProductIdError',
@@ -94,15 +96,22 @@ class CartService {
                     code: EErrors.INVALID_TYPES_ERROR
                 });
             }
+    
             const product = await productManager.getProductById(id);
             if (!product) {
                 CustomErrorCart.createError({
                     name: 'ProductNotFoundError',
-                    cause: generateCartErrorInfo({cid}, {id}) ,
+                    cause: generateCartErrorInfo({cid}, {id}),
                     message: 'Producto no encontrado',
                     code: EErrors.INVALID_TYPES_ERROR
                 });
             }
+            // Verificar si el usuario es premium y si el producto le pertenece
+            if (user.role === 'premium' && String(product.owner) === String(user._id)) {
+                logger.error('Un usuario premium no puede agregar su propio producto al carrito');
+                throw new Error("No puedes agregar tu propio producto al carrito.");
+            }
+    
             const existingProductIndex = cart.products.findIndex(p => p.product.toString() === id);
             if (existingProductIndex !== -1) {
                 cart.products[existingProductIndex].quantity += quantity;
@@ -111,13 +120,14 @@ class CartService {
             }
             cart.total += product.price * quantity;
             await cartManager.updateCart(cid, cart);
+            logger.info('Producto agregado al carrito con éxito');
             return cart;
         } catch (error) {
-            logger.error('Error al agregar el producto al carrito' + error.message)
+            logger.error('Error al agregar el producto al carrito: ' + error.message);
             throw error;
         }
     }
-
+    
     async removeProductFromCart(cid, id) {
         try {
             const cart = await this.getCartById(cid);

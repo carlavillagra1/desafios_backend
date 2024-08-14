@@ -1,0 +1,153 @@
+openapi: 3.0.1
+info:
+  title: API de Carrito
+  description: API para la gestión de carritos de compra
+  version: 1.0.0
+
+paths:
+  /api/carts/{cid}:
+    get:
+      summary: Obtener carrito por ID
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+      responses:
+        '200':
+          description: Carrito encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Carrito no encontrado
+        '401':
+          description: No autorizado
+
+  paths:
+  /api/carts/{cid}/product/{id}:
+    post:
+      summary: Añadir un producto al carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID del producto
+      responses:
+        '200':
+          description: Producto añadido al carrito exitosamente
+        '401':
+          description: No autorizado
+
+    delete:
+      summary: Eliminar un producto del carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID del producto
+      responses:
+        '200':
+          description: Producto eliminado del carrito exitosamente
+        '401':
+          description: No autorizado
+
+  /api/carts:
+    post:
+      summary: Crear un nuevo carrito
+      tags:
+        - Carrito
+      responses:
+        '201':
+          description: Carrito creado
+        '401':
+          description: No autorizado
+  /api/carts/{cid}/clear:
+    delete:
+      summary: Vaciar el carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+      responses:
+        '200':
+          description: Carrito vaciado
+        '404':
+          description: Carrito no encontrado
+        '401':
+          description: No autorizado
+
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Realizar la compra del carrito
+      tags:
+        - Carrito
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: ID del carrito
+      responses:
+        '200':
+          description: Compra realizada
+        '404':
+          description: Carrito no encontrado
+        '401':
+          description: No autorizado
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del carrito
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del producto
+        name:
+          type: string
+          description: Nombre del producto
+        price:
+          type: number
+          description: Precio del producto

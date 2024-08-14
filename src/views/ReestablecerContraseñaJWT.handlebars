@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="containerLogin">
+        <div class="login">
+            <h3>Restablecer contraseña</h3>
+            <form action="/api/session/passwordRestablecido" method="POST">
+                <input type="hidden" name="token" value=" {{token}}">
+                <label for="new-password">Nueva contraseña:</label>
+                <input type="password" name="new-password" required>
+                <button type="submit" class="ingresar">Restablecer contraseña</button>
+            </form>
+            <a href="/api/views/login">Volver a login</a>
+        </div>
+    </div>
+</div>

@@ -2,6 +2,9 @@ const CartService = require('../services/cartService.js');
 const cartService = new CartService();
 const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
+const ProductService = require('../services/productService.js')
+const productService = new ProductService()
+
 const logger = require('../utils/logger.js')
 
 exports.createCart = async (req, res) => {
@@ -84,12 +87,23 @@ exports.addProductToCart = async (req, res) => {
     try {
         const { cid, id } = req.params;
         let { quantity } = req.body;
+
+        // Verificar si el producto pertenece al usuario premium
+        const product = await productService.getProductById(id); 
+        const userId = req.session.user._id;
+
+        if (req.session.user.role === 'premium' && product.owner.toString() === userId) {
+            logger.warning('Intento de agregar un producto propio al carrito', { productId: id, userId });
+            return res.status(403).json({ message: 'No puedes agregar tu propio producto al carrito' });
+        }
+
         // Si quantity no está definido, establece un valor predeterminado de 1
         quantity = quantity ? Number(quantity) : 1;
         if (!quantity || isNaN(quantity) || quantity <= 0) {
             logger.warning('Intento de agregar una cantidad inválida al carrito', { quantity });
             return res.status(400).send('Cantidad inválida');
         }
+
         const cart = await cartService.addProductToCart(cid, id, quantity);
         res.redirect(`/api/views/cart?cid=${cid}`);
     } catch (error) {
@@ -97,6 +111,7 @@ exports.addProductToCart = async (req, res) => {
         res.status(500).send('Error al agregar el producto al carrito: ' + error.message);
     }
 };
+
 
 exports.removeProductFromCart = async (req, res) => {
     try {
@@ -162,3 +177,4 @@ exports.purchaseCart = async (req, res) => {
         res.status(500).json({ message: 'Error al realizar la compra: ' + error.message });
     }
 };
+

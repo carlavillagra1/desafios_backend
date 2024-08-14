@@ -1,24 +1,23 @@
-
 <div class="saludo">
     <div class="logo">
         <h1>ROCKIANDO SPORT</h1>
     </div>
     <div class="saludoPadre">
-    <div class="saludoUser">
-    <h2>Bienvenido {{user.nombre}} {{user.apellido}} </h2>
-    </div>
-    <div class="boton">
-    <div class="btnCarrito">
-        <a href="/api/views/cart">Carrito</a>
-    </div>
-    <div class="btnPerfil">
-        <a href="/api/views/profile"  class="btnPerfil">Perfil</a>
-    </div>
-        <form action="/api/session/logout" method="POST">
-            <button type="submit" class="btnCerrar">Cerrar Sesión</button>
-        </form>
+        <div class="saludoUser">
+            <h2>Bienvenido {{user.nombre}} {{user.apellido}} </h2>
+        </div>
+        <div class="boton">
+            <div class="btnCarrito">
+                <a href="/api/views/cart">Carrito</a>
+            </div>
+            <div class="btnPerfil">
+                <a href="/api/views/profile" class="btnPerfil">Perfil</a>
+            </div>
+            <form action="/api/session/logout" method="POST">
+                <button type="submit" class="btnCerrar">Cerrar Sesión</button>
+            </form>
 
-    </div>
+        </div>
     </div>
 </div>
 
@@ -26,7 +25,6 @@
     <!-- Menú desplegable para filtrar por categoría -->
     <div class="sectionCategory">
         <select id="categoria-select" onchange="filtrarProductos()" class="category">
-            <option value="products">Todos los productos</option>
             <option value="mujer">Mujer</option>
             <option value="hombre">Hombre</option>
             <option value="niño">Niño</option>
@@ -42,6 +40,9 @@
             <option value="asc">Menor a mayor</option>
         </select>
         <button onclick="filtrarProductos()" class="btnCerrar">Buscar</button>
+    </div>
+    <div class="volver">
+        <a href="/api/views/home"> Home </a>
     </div>
 </div>
 

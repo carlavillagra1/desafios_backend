@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: API de Productos
+  description: API para la gestión de productos en la tienda
+  version: 1.0.0
+
+paths:
+  /api/product:
+    post:
+      summary: Crear un nuevo producto
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Producto creado exitosamente
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+    get:
+      summary: Obtener todos los productos
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: No autorizado
+
+  /api/product/{id}:
+    get:
+      summary: Obtener un producto por ID
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID del producto
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado
+        '401':
+          description: No autorizado
+
+    put:
+      summary: Actualizar un producto
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID del producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Producto actualizado exitosamente
+        '404':
+          description: Producto no encontrado
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+    delete:
+      summary: Eliminar un producto
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID del producto
+      responses:
+        '200':
+          description: Producto eliminado exitosamente
+        '404':
+          description: Producto no encontrado
+        '401':
+          description: No autorizado
+        '403':
+          description: Acceso denegado
+
+  /api/product/paginate:
+    get:
+      summary: Obtener productos con paginación
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      responses:
+        '200':
+          description: Productos paginados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: No autorizado
+
+  /api/product/filtrar/{categoria}:
+    get:
+      summary: Filtrar productos por categoría
+      security:
+        - bearerAuth: []
+      tags:
+        - Productos
+      parameters:
+        - in: path
+          name: categoria
+          required: true
+          schema:
+            type: string
+          description: Categoría de los productos
+      responses:
+        '200':
+          description: Productos filtrados por categoría
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: No autorizado
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del producto
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        category:
+          type: string
+          description: Categoría del producto
+        stock:
+          type: integer
+          description: Cantidad en stock
+
+    ProductInput:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        category:
+          type: string
+          description: Categoría del producto
+        stock:
+          type: integer
+          description: Cantidad en stock
+      required:
+        - name
+        - price

@@ -5,16 +5,26 @@
         <p>Apellido: {{user.apellido}}</p>
         <p>Email: {{user.email}}</p>
         <p>Edad: {{user.age}}</p>
+
         <form action="/api/session/logout" method="POST">
-            <button type="submit"  class="btnCerrar">Cerrar Sesión</button>
+            <button type="submit" class="btnCerrar">Cerrar Sesión</button>
         </form>
-            <div class="volver">
-        <a href="/api/views/home">Volver a home</a>
-    </div>
+
         <div class="volver">
-        <a href="/api/views/cart">Ir al carrito</a>
-    </div>
-    </div>
+            <a href="/api/views/home">Volver a home</a>
+        </div>
+        <div class="volver">
+            <a href="/api/views/cart">Ir al carrito</a>
+        </div>
 
+      <!-- Botón para cambiar el rol -->
+<form action="/api/users/premium/{{uid}}" method="POST" class="form-change-role">
+    <!-- Campo oculto para simular el método PUT -->
+    <input type="hidden" name="_method" value="PUT">
+    <button type="submit" class="btnCambiarRol">
+        Cambiar a {{#if (eq user.role 'user')}}Premium{{else}}User{{/if}}
+    </button>
+</form>
 
+    </div>
 </div>
