@@ -17,10 +17,10 @@ class productManagerMongo {
                 });
             }
     
-            if (user.role !== 'premium') {
-                throw new Error('Only premium users can create products.');
+            if (user.role !== 'admin' && user.role !== 'premium') {
+                throw new Error('No tienes permiso para crear productos.');
             }
-    
+            
             const newProduct = await productModel.create({
                 title,
                 description,
@@ -29,7 +29,7 @@ class productManagerMongo {
                 code,
                 stock,
                 category,
-                owner: user.email  // Guardamos el correo electrónico del usuario premium
+                owner: user._id 
             });
     
             return newProduct;
@@ -66,33 +66,45 @@ class productManagerMongo {
         }
     }
     
-    async updateProduct(id) {
+    async updateProduct(id, updatedData) {
         try {
-            const productUpdate = await productModel.updateOne({_id: id})
-            return productUpdate
+            // Asegúrate de que updatedData contiene los campos que deseas actualizar
+            const productUpdate = await productModel.updateOne({ _id: id }, { $set: updatedData });
+            
+            // Verifica si el producto se actualizó correctamente
+            if (productUpdate.nModified === 0) {
+                throw new Error("No se encontró el producto o no se realizó ninguna modificación");
+            }
+    
+            return productUpdate;
         } catch (error) {
-            throw new Error("Error al modificar el producto")
-
+            throw new Error("Error al modificar el producto");
         }
     }
-    async deleteProduct(id, user) {
+    
+    async deleteProduct(id, userId, userRole) {
         try {
+            // Buscar el producto en la base de datos
             const product = await productModel.findById(id);
-    
+            // Verificar si el producto existe
             if (!product) {
-                throw new Error("El producto no pudo ser encontrado");
+                throw new Error('Producto no encontrado');
             }
-    
-            if (user.role !== 'admin' && product.owner !== user.email) {
-                throw new Error('No tienes permiso para eliminar este producto.');
+            // Verificar si el usuario tiene permiso para eliminar el producto
+            const isOwner = product.owner.toString() === userId.toString();
+            const isAdmin = userRole === 'admin';
+            if (!isOwner && !isAdmin) {
+                throw new Error('No tienes permiso para eliminar este producto');
             }
-    
-            await product.remove();
-            return { message: 'Producto eliminado exitosamente' };
+            // Eliminar el producto
+            const result = await productModel.deleteOne({ _id: id });
+            return result;
         } catch (error) {
-            throw new Error("Error al eliminar el producto: " + error.message);
+            throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
+    
+    
     
     
     async  paginateProduct({ page = 1, limit = 5, sort = '', query = '', categoria = '' }) {

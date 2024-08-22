@@ -16,7 +16,7 @@ const isNotAuthenticated = (req, res, next) => {
 function getUserOwner(req) {
     return req.user.email || req.user._id; 
 }
-
+4
 // Middleware para verificar si el usuario es administrador
 const isAdmin = (req, res, next) => {
     if (req.session.user && req.session.user.role === 'admin') {
@@ -67,5 +67,6 @@ module.exports = {
     isRegularUser, 
     isPremium, 
     isUserOrPremium ,
-    isAdminOrPremium
+    isAdminOrPremium,
+    getUserOwner
 };

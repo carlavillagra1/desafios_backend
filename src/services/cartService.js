@@ -56,15 +56,18 @@ class CartService {
 
     async deleteCart(cid) {
         try {
-            const cartDelete = await cartManager.deleteCart(cid);
-            logger.info('Carrito eliminado con exito', {cid})
-            return cartDelete;
+            const deletedCart = await cartManager.deleteCart(cid);
+            if (deletedCart.deletedCount === 0) {
+                throw new Error('Carrito no encontrado');
+            }
+            logger.info('Carrito eliminado con éxito', { cid });
+            return null; // Retorna null para indicar que la operación fue exitosa
         } catch (error) {
-            logger.error('Error al eliminar el carrito' + error.message)
+            logger.error('Error al eliminar el carrito: ' + error.message);
             throw new Error("Error al eliminar el carrito: " + error.message);
         }
     }
-
+    
     async updateCart(cid, updatedCart) {
         try {
             const cartUpdate = await cartManager.updateCart(cid, updatedCart);
@@ -79,7 +82,7 @@ class CartService {
         try {
             quantity = Number(quantity);
             if (isNaN(quantity) || quantity <= 0) {
-                logger.error('Cantidad invalida');
+                logger.error('Cantidad inválida');
                 throw new Error("Cantidad inválida");
             }
     
@@ -106,7 +109,7 @@ class CartService {
                     code: EErrors.INVALID_TYPES_ERROR
                 });
             }
-            // Verificar si el usuario es premium y si el producto le pertenece
+    
             if (user.role === 'premium' && String(product.owner) === String(user._id)) {
                 logger.error('Un usuario premium no puede agregar su propio producto al carrito');
                 throw new Error("No puedes agregar tu propio producto al carrito.");
@@ -127,6 +130,7 @@ class CartService {
             throw error;
         }
     }
+    
     
     async removeProductFromCart(cid, id) {
         try {
@@ -164,8 +168,8 @@ class CartService {
     }
     async clearCartProducts(cid) {
         try {
-            return await cartManager.clearCartProducts(cid);
             logger.info('Carrito vaciado con exito')
+            return await cartManager.clearCartProducts(cid);
         } catch (error) {
             logger.error('Error al vaciar el carrito' + error.message)
             throw error;

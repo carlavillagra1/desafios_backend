@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
     status: { type: Boolean, default: true },
     stock: { type: Number, required: true },
     category: { type: String, required: true },
-    owner: { type: String, required: true } 
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default:'admin' }
 });
 
 
@@ -20,7 +20,7 @@ productSchema.pre('save', async function (next) {
     if (!this.owner) {
         const admin = await mongoose.model('Users').findOne({ role: 'admin' });
         if (admin) {
-            this.owner = admin.email;
+            this.owner = admin._id;
         }
     }
     next();

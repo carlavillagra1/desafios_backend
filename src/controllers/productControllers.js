@@ -9,21 +9,12 @@ const { getUserOwner } = require('../public/js/auth.js')
 
 exports.createProduct = async (req, res, next) => {
     try {
-        // Obtener el owner (email o ID del usuario autenticado)
-        const owner = getUserOwner(req);
-        // Destructurar los datos del cuerpo de la solicitud
-        let { title, description, price, thumbnail, code, stock, category } = req.body;
-        
-        // Validación de campos obligatorios
-        if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
-            logger.warning('Intento de creación de producto con datos incompletos', { requestData: req.body });
-            CustomError.createError({
-                name: 'InvalidProductError',
-                cause: generateProductErrorInfo(req.body),
-                message: 'Error al crear el producto: Información inválida',
-                code: EErrors.INVALID_TYPES_ERROR
-            });
+        if (!req.user || !req.user.role) {
+            throw new Error('Usuario no autenticado o falta el rol');
         }
+        let { title, description, price, thumbnail, code, stock, category } = req.body;
+        const user = req.user; // Asegúrate de incluir el usuario
+
         // Crear el producto incluyendo el owner
         const newProduct = await productService.createProduct({
             title,
@@ -33,15 +24,15 @@ exports.createProduct = async (req, res, next) => {
             code,
             stock,
             category,
-            owner // Añadir el owner al cuerpo de la solicitud
+            user  // Pasa el usuario aquí
         });
-        // Responder con éxito
-        res.send({ result: "success", payload: newProduct });
+        res.status(201).send({ result: "success", payload: newProduct }); 
     } catch (error) {
         logger.error("Error al crear el producto: " + error.message);
         next(error);
     }
 };
+
 
 
 exports.getAllProducts = async (req, res) => {
@@ -69,24 +60,30 @@ exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const updatedProduct = await productService.updateProduct(id, req.body);
-        res.status(200).json(updatedProduct);
+        // Si no hay modificaciones, podría responderse con un mensaje distinto
+        if (updatedProduct.nModified === 0) {
+            return res.status(404).json({ message: "No se encontró el producto o no se realizó ninguna modificación" });
+        }
+        res.status(200).json({ result: 'success' });  // Cambiado para coincidir con lo esperado por el test
     } catch (error) {
-        logger.error('Error al actualizar los productos' + error.message)
+        logger.error('Error al actualizar los productos: ' + error.message);
         res.status(500).json({ message: "Error al actualizar el producto: " + error.message });
     }
 };
 
+
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedProduct = await productService.deleteProduct(id);
-        res.status(200).json(deletedProduct);
+        const userId = req.session.user._id ||req.session.user.id ; // Asegúrate de que esto esté configurado correctamente
+        const userRole = req.session.user.role; // Asegúrate de que esto esté configurado correctamente
+        const result = await productService.deleteProduct(id, userId, userRole);
+        res.status(200).json({ result: 'success' });
     } catch (error) {
-        logger.error('Error al eliminar el producto' + error.message)
-        res.status(500).json({ message: "Error al eliminar el producto: " + error.message });
+        logger.error('Error al eliminar el producto: ' + error.message);
+        res.status(500).json({ message: 'Error al eliminar el producto: ' + error.message });
     }
 };
-
 exports.paginateProducts = async (req, res) => {
     try {
         const result = await productService.paginateProducts(req.query);

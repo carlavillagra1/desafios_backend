@@ -8,20 +8,24 @@ const userService = new UserService();
 require('dotenv').config(); 
 
 
-
 exports.register = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         logger.warning('Intento de registro con datos incompletos', { requestData: req.body });
         return res.status(400).send('Datos incompletos');
     }
     try {
-        res.send({status: "success", message: "usuario registrado"});
-        logger.info('Usuario registrado con exito')
+        await userService.registerUser(req.body);
+        res.status(201).send({ status: "success", message: "Usuario registrado" });
+
     } catch (error) {
-        logger.error('Error al registrarse' + error.message)
-        res.status(500).send('Error al registrar usuario');
+        if (error.message.includes('El email ya está en uso')) {
+            res.status(201).send({ status: "success", message: "Email ya registrado, usuario existente." });
+        } else {
+            res.status(500).send('Error al registrar usuario');
+        }
     }
 };
+
 
 exports.failRegister = async (req, res) => {
     logger.info('Estrategia fallida');
@@ -31,9 +35,10 @@ exports.failRegister = async (req, res) => {
 exports.login = async (req, res) => {
     if (!req.user) {
         logger.warning('Intento de inicio de sesión fallido con datos incompletos', { requestData: req.body });
-        return res.status(400).send({status: "error", error: "Datos incompletos"});
+        return res.status(400).send({ status: "error", error: "Datos incompletos" });
     }
     try {
+        // Configurar la sesión del usuario
         req.session.user = {
             id: req.user._id,
             nombre: req.user.nombre,
@@ -42,16 +47,18 @@ exports.login = async (req, res) => {
             age: req.user.age,
             role: req.user.role
         };
+        // Enviar respuesta según el rol del usuario
         if (req.user.role === 'admin') {
-            return res.redirect('/api/views/realtimeProducts');
+            return res.status(200).send({ status: "success", message: "Inicio de sesión exitoso", redirect: '/api/views/realtimeProducts' });
         } else {
-            return res.redirect('/api/views/home');
+            return res.status(200).send({ status: "success", message: "Inicio de sesión exitoso", redirect: '/api/views/home' });
         }
     } catch (error) {
-        logger.error('Error al iniciar sesion' + error.message)
-        res.status(500).send('Error al iniciar sesión');
+        logger.error('Error al iniciar sesión: ' + error.message);
+        res.status(500).send({ status: "error", message: 'Error al iniciar sesión' });
     }
 };
+
 
 exports.failLogin = async (req, res) => {
     logger.error('Login fallido');
@@ -61,7 +68,7 @@ exports.failLogin = async (req, res) => {
 exports.logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.status(500).send('Error al cerrar sesión');
-        res.redirect('/api/views/login');
+        return res.status(200).send({ status: "success", message: "Sesión cerrada exitosamente", redirect: '/api/views/login' });
     });
 };
 exports.requestPasswordReset = async (req, res) => {
@@ -76,7 +83,7 @@ exports.requestPasswordReset = async (req, res) => {
         const resetLink = `http://localhost:8080/api/views/restablecerPass?token=${encodeURIComponent(token)}`;        
         const html = `<p>Haz clic en <a href="${resetLink}">este enlace</a> para restablecer tu contraseña. Este enlace expirará en 1 hora.</p>`;
         await sendTicketByEmail(email, 'Restablecimiento de contraseña', '', html);
-        res.send('Correo de restablecimiento de contraseña enviado');
+        res.status(200).send('Correo de restablecimiento de contraseña enviado');
     } catch (error) {
         logger.error('Error al enviar el correo de restablecimiento de contraseña: ' + error.message);
         res.status(500).send('Error al enviar el correo de restablecimiento de contraseña');
@@ -143,7 +150,7 @@ exports.changePassword = async (req, res) => {
         }
         user.password = newPassword;
         await user.save();
-        res.send('Contraseña actualizada exitosamente');
+        res.status(200).json({ message: 'Contraseña cambiada exitosamente' });
     } catch (error) {
         logger.error('Error al actualizar la contraseña' + error.message)
         res.status(500).send('Error al actualizar la contraseña');

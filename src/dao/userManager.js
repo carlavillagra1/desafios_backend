@@ -6,9 +6,14 @@ class UserRepository {
             const newUser = await User.create(userData);
             return newUser;
         } catch (error) {
-            throw new Error("Error al crear el usuario: " + error.message);
+            if (error.code === 11000) {
+                // Error de clave duplicada (email ya existente)
+                throw new Error('El email ya está en uso');
+            }
+            throw new Error('Error al crear el usuario: ' + error.message);
         }
     }
+    
 
     async getUserByEmail(email) {
         try {

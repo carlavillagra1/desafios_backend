@@ -43,6 +43,9 @@ const hbs = handlebars.create({
 Handlebars.registerHelper('eq', function (a, b) {
     return a === b;
 });
+Handlebars.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+});
 
 
 initializePassport()

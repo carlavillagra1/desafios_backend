@@ -11,8 +11,8 @@ btnAgregar.addEventListener('click', () => {
     const code = document.getElementById('code').value;
     const stock = document.getElementById('stock').value;
     const category = document.getElementById('category').value;
-    const owner = getUserOwner(); 
-    socket.emit('NewProduct', { title, description, price, thumbnail, code, stock, category });
+    const owner = user._id;
+    socket.emit('NewProduct', { title, description, price, thumbnail, code, stock, category, owner });
 });
 
 socket.on('products', products => {
@@ -34,6 +34,7 @@ socket.on('products', products => {
             <strong>Codigo: </strong>${product.code}
             <strong>Stock: </strong>${product.stock}
             <strong>Categoria: </strong>${product.category}
+            <strong>Owner: </strong>${product.owner}
         `;
 
         // Crear botón Eliminar
@@ -41,8 +42,9 @@ socket.on('products', products => {
         btnEliminar.innerHTML = 'Eliminar';
         btnEliminar.classList.add('btnEliminarP');
         btnEliminar.addEventListener('click', () => {
-            socket.emit('eliminarProduct', product._id);
+            socket.emit('eliminarProduct', { _id: product._id });
         });
+        
 
         // Crear botón Editar
         const btnEditar = document.createElement('button');

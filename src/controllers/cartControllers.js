@@ -61,15 +61,16 @@ exports.getCartByUserId = async (req, res) => {
 
 exports.deleteCart = async (req, res) => {
     try {
-        const { id } = req.params;
-        const deletedCart = await cartService.deleteCart(id);
-        logger.info('Carrito eliminado con exito')
-        res.status(200).json(deletedCart);
+        const { cid } = req.params;
+        await cartService.deleteCart(cid);
+        logger.info('Carrito eliminado con éxito');
+        res.status(200).json({ message: 'Carrito eliminado con éxito' });
     } catch (error) {
         logger.error('Error al eliminar el carrito:' + error.message);
         res.status(500).json({ message: 'Error al eliminar el carrito' });
     }
 };
+
 
 exports.updateCart = async (req, res) => {
     try {
@@ -83,6 +84,7 @@ exports.updateCart = async (req, res) => {
     }
 };
 
+// cartControllers.js
 exports.addProductToCart = async (req, res) => {
     try {
         const { cid, id } = req.params;
@@ -90,9 +92,12 @@ exports.addProductToCart = async (req, res) => {
 
         // Verificar si el producto pertenece al usuario premium
         const product = await productService.getProductById(id); 
-        const userId = req.session.user._id;
-
-        if (req.session.user.role === 'premium' && product.owner.toString() === userId) {
+        if (!product) {
+            logger.error('Producto no encontrado', { productId: id });
+            return res.status(404).send('Producto no encontrado');
+        }
+        const userId = req.session.user ? req.session.user._id : null;
+        if (req.session.user && req.session.user.role === 'premium' && product.owner.toString() === userId) {
             logger.warning('Intento de agregar un producto propio al carrito', { productId: id, userId });
             return res.status(403).json({ message: 'No puedes agregar tu propio producto al carrito' });
         }
@@ -104,8 +109,8 @@ exports.addProductToCart = async (req, res) => {
             return res.status(400).send('Cantidad inválida');
         }
 
-        const cart = await cartService.addProductToCart(cid, id, quantity);
-        res.redirect(`/api/views/cart?cid=${cid}`);
+        const cart = await cartService.addProductToCart(cid, id, quantity, req.session.user);
+        res.status(200).json({ result: 'success', cart });
     } catch (error) {
         logger.error('Error al agregar el producto al carrito:', error.message);
         res.status(500).send('Error al agregar el producto al carrito: ' + error.message);

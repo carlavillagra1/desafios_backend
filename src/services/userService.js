@@ -5,11 +5,17 @@ const logger = require('../utils/logger.js')
 class UserService {
     async registerUser(userData) {
         try {
+            logger.info(`Verificando existencia del email: ${userData.email}`);
+            const existingUser = await userManager.getUserByEmail(userData.email);
+            if (existingUser) {
+                logger.warning(`Intento de registro con email duplicado: ${userData.email}`);
+                throw new Error('El email ya está en uso');
+            }
+
             const newUser = await userManager.createUser(userData);
-            logger.info('Usuario registrado con exito', {userData})
             return newUser;
         } catch (error) {
-            logger.error('Error al registrar el usuario' + error.message)
+            logger.error('Error al registrar el usuario: ' + error.message);
             throw new Error("Error al registrar el usuario: " + error.message);
         }
     }
@@ -17,7 +23,7 @@ class UserService {
     async getUserByEmail(email) {
         try {
             const user = await userManager.getUserByEmail(email);
-            logger.info('Usuario encontrado', {email})
+            logger.info('Usuario encontrado', { email })
             return user;
         } catch (error) {
             logger.error('Error al obtener el usuario' + error.message)
@@ -28,7 +34,7 @@ class UserService {
     async updateUserPassword(userId, newPassword) {
         try {
             const user = await userManager.updateUserPassword(userId, newPassword);
-            logger.info('Se actualizo con exito la contraseña', {userId, newPassword})
+            logger.info('Se actualizo con exito la contraseña', { userId, newPassword })
             return user;
         } catch (error) {
             logger.error('Error al acualizar la contraseña' + error.message)

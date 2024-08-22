@@ -4,9 +4,9 @@ const logger = require('../utils/logger.js');
 
 class ProductService {
     async createProduct(data) {
-        let { title, description, price, thumbnail, code, stock, category } = data;
+        let { title, description, price, thumbnail, code, stock, category, user } = data;
         try {
-            const newProduct = await productManager.createProduct(title, description, price, thumbnail, code, stock, category);
+            const newProduct = await productManager.createProduct(title, description, price, thumbnail, code, stock, category, user);
             logger.info('Producto creado exitosamente');
             return newProduct;
         } catch (error) {
@@ -40,25 +40,24 @@ class ProductService {
     async updateProduct(id, updatedData) {
         try {
             const product = await productManager.updateProduct(id, updatedData);
-            logger.info('Producto actualizado exitosamente', { id });
-            return product;
+            return { result: product };  // Asegúrate de que coincida con la expectativa de la prueba
         } catch (error) {
-            logger.error("Error al actualizar el producto: " + error.message);
             throw new Error("Error al actualizar el producto: " + error.message);
         }
     }
+    
 
-    async deleteProduct(id) {
+    async deleteProduct(id, userId, userRole) {
         try {
-            const deletedProduct = await productManager.deleteProduct(id);
+            const result = await productManager.deleteProduct(id, userId, userRole);
             logger.info('Producto eliminado exitosamente', { id });
-            return deletedProduct;
+            return result;
         } catch (error) {
-            logger.error("Error al eliminar el producto: " + error.message);
-            throw new Error("Error al eliminar el producto: " + error.message);
+            logger.error('Error al eliminar el producto: ' + error.message);
+            throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
-
+    
     async paginateProducts(params) {
         try {
             const result = await productManager.paginateProduct(params);
