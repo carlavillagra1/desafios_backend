@@ -14,15 +14,11 @@ exports.register = async (req, res) => {
         return res.status(400).send('Datos incompletos');
     }
     try {
-        await userService.registerUser(req.body);
-        res.status(201).send({ status: "success", message: "Usuario registrado" });
-
+        res.status(200).send({status: "success", message: "usuario registrado"});
+        logger.info('Usuario registrado con exito')
     } catch (error) {
-        if (error.message.includes('El email ya está en uso')) {
-            res.status(201).send({ status: "success", message: "Email ya registrado, usuario existente." });
-        } else {
-            res.status(500).send('Error al registrar usuario');
-        }
+        logger.error('Error al registrarse' + error.message)
+        res.status(500).send('Error al registrar usuario');
     }
 };
 

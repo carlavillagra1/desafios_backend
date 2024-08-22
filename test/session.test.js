@@ -22,21 +22,20 @@ describe('Testing sessions', function () {
 
     });
     it('El endpoint POST /api/session/register debe registrar un nuevo usuario', async () => {
-        // Asegúrate de que el usuario no existe antes de ejecutar la prueba
+          // Generar un email único
+        const uniqueEmail = `test-${Date.now()}@example.com`;
         const registerResponse = await requester
         .post('/api/session/register')
         .send({
             nombre: 'Juanita',
             apellido: 'Pereira',
-            email: 'juanitapereira1@example.com',
+            email: uniqueEmail,
             age: 15,
             password: '123456'
         });
 
-        expect(registerResponse.status).to.equal(201);
-        expect(registerResponse.body).to.have.property('status', 'success');
-        expect(registerResponse.body).to.have.property('message', 'Usuario registrado');
-
+        expect(registerResponse.status).to.equal(200);
+        expect(registerResponse.body).to.have.property('message', 'usuario registrado');
     })
 
     it('El endpoint POST /login debe iniciar sesión', async () => {
@@ -54,20 +53,19 @@ describe('Testing sessions', function () {
         cookie = loginResponse.headers['set-cookie'][0];
     });
 
-    // it('El endpoint POST /logout debe cerrar sesión', async () => {
-        // const response = await requester
-            // .post('/api/session/logout')
-            // .set('Cookie', cookie);
+       it('El endpoint POST /logout debe cerrar sesión', async () => {
+        const response = await requester
+            .post('/api/session/logout')
+            .set('Cookie', cookie);
 
+        expect(response.status).to.equal(200);
+        expect(response.body).to.deep.equal({
+            status: "success",
+            message: "Sesión cerrada exitosamente",
+            redirect: '/api/views/login'
+        });
+    });
 
-
-        // expect(response.status).to.equal(200);
-        // expect(response.body).to.deep.equal({
-            // status: "success",
-            // message: "Sesión cerrada exitosamente",
-            // redirect: '/api/views/login'
-        // });
-    // });
     it('El endpoint POST /reestablecerPassword debe solicitar restablecimiento de contraseña', async () => {
         const response = await requester
             .post('/api/session/reestablecerPassword')

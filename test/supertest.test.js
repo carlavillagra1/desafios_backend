@@ -3,30 +3,36 @@ const chai = require('chai');
 const supertest = require('supertest');
 const mongoose = require('mongoose');
 const Product = require('../src/dao/models/product.model.js');
+const Cart = require('../src/dao/models/carts.model.js')
+const db = require('../src/config/database.js');
+
 
 dotenv.config();
 
 const expect = chai.expect;
 const requester = supertest(process.env.SUPERTEST_URL);
 
-describe('Testing de Productos', function () {
+describe('Testing', function () {
     this.timeout(30000);
-    let cookie;
-    
+
     before(async function () {
-        // Conectar a la base de datos y realizar login antes de las pruebas
+        // Conectar a la base de datos antes de las pruebas
         await mongoose.connect(process.env.MONGODB, {
             serverSelectionTimeoutMS: 30000
         });
-        
-        const loginResponse = await requester
-        .post('/api/session/login')
-        .send({ email: 'villgramagali011@gmail.com', password: 'brownie' });
-        expect(loginResponse.status).to.equal(302);
-        cookie = loginResponse.headers['set-cookie'][0];
     });
-    
-    // Pruebas de productos aquí...
+
+    let cookie;
+
+    before(async function () {
+        // Realizar el login y obtener la cookie de sesión antes de las pruebas
+        const loginResponse = await requester
+            .post('/api/session/login')
+            .send({ email: 'villgramagali011@gmail.com', password: 'brownie' });
+        cookie = loginResponse.headers['set-cookie'];
+    });
+
+    describe('Test de productos', () => {
     it('El endpoint POST /api/product debe crear un producto correctamente', async () => {
         const createProductResponse = await requester
             .post('/api/product')
@@ -102,18 +108,19 @@ describe('Testing de Productos', function () {
         expect(updatedProduct.price).to.equal(230);
     });
     
-    // it('El endpoint DELETE /api/product/:id debe eliminar un producto', async () => {
-    //     const product = await Product.findOne({ _id: '66c6532a33e51e560e857ae8' }); 
-    //     const deleteProductResponse = await requester
-    //         .delete(`/api/product/${product._id}`)
-    //         .set('Cookie', cookie);
+    it('El endpoint DELETE /api/product/:id debe eliminar un producto', async () => {
+        //Cambiar el id para corregir el test
+        const product = await Product.findOne({ _id: '66c6a626432b2f76e6c1e465' }); 
+        const deleteProductResponse = await requester
+            .delete(`/api/product/${product._id}`)
+            .set('Cookie', cookie);
     
-    //     expect(deleteProductResponse.status).to.equal(200);
-    //     expect(deleteProductResponse.body).to.have.property('result', 'success');
+        expect(deleteProductResponse.status).to.equal(200);
+        expect(deleteProductResponse.body).to.have.property('result', 'success');
     
-    //     const deletedProduct = await Product.findById(product._id);
-    //     expect(deletedProduct).to.be.null;
-    // });
+        const deletedProduct = await Product.findById(product._id);
+        expect(deletedProduct).to.be.null;
+    });
     
     it('El endpoint GET /api/product/filtrar/:categoria debe filtrar productos por categoría', async () => {
         const filterResponse = await requester
@@ -125,145 +132,93 @@ describe('Testing de Productos', function () {
         filterResponse.body.docs.forEach(product => {
             expect(product.category).to.equal('hombre');
         });
-    
-    });
-
-    after(async function () {
-        await mongoose.connection.close();
-    });
-});
-
-
-
-
-
-
-
-// const dotenv = require('dotenv');
-// const chai = require('chai');
-// const supertest = require('supertest');
-// const mongoose = require('mongoose');
-// const Product = require('../src/dao/models/product.model.js');
-// const Cart = require('../src/dao/models/carts.model.js')
-// const db = require('../src/config/database.js');
-
-
-// dotenv.config();
-
-// const expect = chai.expect;
-// const requester = supertest(process.env.SUPERTEST_URL);
-
-// describe('Testing', function () {
-//     this.timeout(30000);
-
-//     before(async function () {
-//         // Conectar a la base de datos antes de las pruebas
-//         await mongoose.connect(process.env.MONGODB, {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true,
-//             serverSelectionTimeoutMS: 30000
-//         });
-//     });
-
-//     let cookie;
-
-//     before(async function () {
-//         // Realizar el login y obtener la cookie de sesión antes de las pruebas
-//         const loginResponse = await requester
-//             .post('/api/session/login')
-//             .send({ email: 'villgramagali011@gmail.com', password: 'brownie' });
-//         expect(loginResponse.status).to.equal(302);
-//         cookie = loginResponse.headers['set-cookie'][0];
-//     });
-
-//     describe('Test de productos', () => {
-
-//     });
-//     describe('Test de carts', () => {
-//         it('El endpoint GET /api/carts/:cid debe obtener un carrito por su ID', async () => {
-//             const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
-//             const getCartResponse = await requester
-//                 .get(`/api/carts/${cart._id}`)
-//                 .set('Cookie', cookie);
-
-//             expect(getCartResponse.status).to.equal(200);
-//             expect(cart._id.toString()).to.equal('66bcdf7f9dc8c8750e732b36');
-//             expect(getCartResponse.body.products).to.be.an('array');
-//         });
-
-//         it('El endpoint POST /api/carts/:cid/product/:id debe añadir un producto al carrito', async () => {
-//             const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
-//             const product = await Product.findOne({ _id: '66bfb5315be8f3296cd06d01' });
-
-//             if (!cart || !product) {
-//                 throw new Error('Carrito o producto no encontrado en la base de datos');
-//             }
-
-//             const addProductResponse = await requester
-//                 .post(`/api/carts/${cart._id}/product/${product._id}`)
-//                 .set('Cookie', cookie)
-//                 .send({ quantity: 2 });
-
-//             expect(addProductResponse.status).to.equal(200);
-//             expect(addProductResponse.body).to.have.property('result', 'success');
-//             expect(addProductResponse.body.cart.products).to.be.an('array');
-
-//             const expectedProduct = {
-//                 product: product._id.toString(),
-//                 quantity: 2
-//             };
-
-//             const cartProducts = addProductResponse.body.cart.products;
-//             const addedProduct = cartProducts.find(p => p.product === product._id.toString());
-
-//             expect(addedProduct).to.deep.include(expectedProduct);
-//         });
-
-//         // it('El endpoint DELETE /api/carts/:cid/product/:id debe eliminar un producto del carrito', async () => {
-//         //     const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
-//         //     const product = await Product.findOne({ _id: '66bfb4f05be8f3296cd06cfd' });
-
-//         //     if (!cart || !product) {
-//         //         throw new Error('Carrito o producto no encontrado en la base de datos');
-//         //     }
-//         //     await requester
-//         //         .post(`/api/carts/${cart._id}/product/${product._id}`)
-//         //         .set('Cookie', cookie)
-//         //         .send({ quantity: 2 });
-
-//         //     const removeProductResponse = await requester
-//         //         .delete(`/api/carts/${cart._id}/product/${product._id}`)
-//         //         .set('Cookie', cookie);
-
-//         //     expect(removeProductResponse.status).to.equal(200);
-//         //     expect(removeProductResponse.body).to.have.property('result', 'success');
-
-//         //     const updatedCart = await Cart.findById(cart._id);
-//         //     const productInCart = updatedCart.products.find(p => p.product.toString() === product._id.toString());
-
-//         //     expect(productInCart).to.be.undefined;
-//         // });
-//         // it('El endpoint DELETE /api/carts/:cid debe eliminar el carrito con dicho id', async () => {
-//         //     const cart = await Cart.findOne({ _id: '6683337f8d0a11afa65f7edf' });
-
-//         //     const removeCartResponse = await requester
-//         //         .delete(`/api/carts/${cart._id}`)
-//         //         .set('Cookie', cookie);
-
-//         //     // Verifica que la eliminación fue exitosa
-//         //     expect(removeCartResponse.status).to.equal(200);
-//         //     expect(removeCartResponse.body.message).to.equal('Carrito eliminado con éxito');
-
-//         //     const deletedCart = await Cart.findById(cart._id);
-//         //     expect(deletedCart).to.be.null; // Verifica que el carrito ya no existe
-//         // });
-//     })
-
-//     describe()
         
+    });    
+        describe('Test de carts', () => {
+            it('El endpoint GET /api/carts/:cid debe obtener un carrito por su ID', async () => {
+                const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
+                const getCartResponse = await requester
+                    .get(`/api/carts/${cart._id}`)
+                    .set('Cookie', cookie);
+    
+                expect(getCartResponse.status).to.equal(200);
+                expect(cart._id.toString()).to.equal('66bcdf7f9dc8c8750e732b36');
+                expect(getCartResponse.body.products).to.be.an('array');
+            });
+    
+            it('El endpoint POST /api/carts/:cid/product/:id debe añadir un producto al carrito', async () => {
+                const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
+                const product = await Product.findOne({ _id: '66bfb5315be8f3296cd06d01' });
+    
+                if (!cart || !product) {
+                    throw new Error('Carrito o producto no encontrado en la base de datos');
+                }
+    
+                const addProductResponse = await requester
+                    .post(`/api/carts/${cart._id}/product/${product._id}`)
+                    .set('Cookie', cookie)
+                    .send({ quantity: 2 });
+    
+                expect(addProductResponse.status).to.equal(200);
+                expect(addProductResponse.body).to.have.property('result', 'success');
+                expect(addProductResponse.body.cart.products).to.be.an('array');
+    
+                const expectedProduct = {
+                    product: product._id.toString(),
+                    quantity: 2
+               };
+    
+                const cartProducts = addProductResponse.body.cart.products;
+                const addedProduct = cartProducts.find(p => p.product === product._id.toString());
+    
+                expect(addedProduct).to.deep.include(expectedProduct);
+            });
+    
+            it('El endpoint DELETE /api/carts/:cid/product/:id debe eliminar un producto del carrito', async () => {
+                const cart = await Cart.findOne({ _id: '66bcdf7f9dc8c8750e732b36' });
+                //Este no hace falta cambiar el id para corregir si funciona el test
+                const product = await Product.findOne({ _id:'66bfb5315be8f3296cd06d01' });
+    
+                if (!cart || !product) {
+                    throw new Error('Carrito o producto no encontrado en la base de datos');
+                }
+                await requester
+                     .post(`/api/carts/${cart._id}/product/${product._id}`)
+                    .set('Cookie', cookie)
+                    .send({ quantity: 2 });
+    
+                const removeProductResponse = await requester
+                    .delete(`/api/carts/${cart._id}/product/${product._id}`)
+                    .set('Cookie', cookie);
+    
+                expect(removeProductResponse.status).to.equal(200);
+                expect(removeProductResponse.body).to.have.property('result', 'success');
+    
+                const updatedCart = await Cart.findById(cart._id);
+                const productInCart = updatedCart.products.find(p => p.product.toString() === product._id.toString());
+    
+                expect(productInCart).to.be.undefined;
+            });
+            it('El endpoint DELETE /api/carts/:cid debe eliminar el carrito con dicho id', async () => {
+                //Poner otro id para corregir el test
+                const cart = await Cart.findOne({ _id:'66c6a71389ba4a0675e50781' });
+    
+                const removeCartResponse = await requester
+                    .delete(`/api/carts/${cart._id}`)
+                    .set('Cookie', cookie);
+    
+                expect(removeCartResponse.status).to.equal(200);
+                expect(removeCartResponse.body.message).to.equal('Carrito eliminado con éxito');
+    
+                const deletedCart = await Cart.findById(cart._id);
+                expect(deletedCart).to.be.null; // Verifica que el carrito ya no existe
+            });
+        })
+    
+        // Hook que se ejecuta después de todas las pruebas
+        after(async function () {
+            await mongoose.connection.close();
+        });
+    });
 
-//     // Hook que se ejecuta después de todas las pruebas
-//     after(async function () {
-//         await mongoose.connection.close();
-//     });
-// });
+    });

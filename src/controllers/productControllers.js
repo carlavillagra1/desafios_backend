@@ -13,9 +13,8 @@ exports.createProduct = async (req, res, next) => {
             throw new Error('Usuario no autenticado o falta el rol');
         }
         let { title, description, price, thumbnail, code, stock, category } = req.body;
-        const user = req.user; // Asegúrate de incluir el usuario
-
-        // Crear el producto incluyendo el owner
+        const user = req.user; 
+        
         const newProduct = await productService.createProduct({
             title,
             description,
@@ -24,7 +23,7 @@ exports.createProduct = async (req, res, next) => {
             code,
             stock,
             category,
-            user  // Pasa el usuario aquí
+            user  
         });
         res.status(201).send({ result: "success", payload: newProduct }); 
     } catch (error) {
@@ -64,7 +63,7 @@ exports.updateProduct = async (req, res) => {
         if (updatedProduct.nModified === 0) {
             return res.status(404).json({ message: "No se encontró el producto o no se realizó ninguna modificación" });
         }
-        res.status(200).json({ result: 'success' });  // Cambiado para coincidir con lo esperado por el test
+        res.status(200).json({ result: 'success' }); 
     } catch (error) {
         logger.error('Error al actualizar los productos: ' + error.message);
         res.status(500).json({ message: "Error al actualizar el producto: " + error.message });
@@ -75,8 +74,8 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.session.user._id ||req.session.user.id ; // Asegúrate de que esto esté configurado correctamente
-        const userRole = req.session.user.role; // Asegúrate de que esto esté configurado correctamente
+        const userId = req.session.user._id ||req.session.user.id ;
+        const userRole = req.session.user.role;
         const result = await productService.deleteProduct(id, userId, userRole);
         res.status(200).json({ result: 'success' });
     } catch (error) {
