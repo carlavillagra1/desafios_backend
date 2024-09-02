@@ -98,7 +98,7 @@ exports.filterByCategory = async (req, res) => {
     let { page, limit, sort, query } = req.query;
     // Convertir page y limit a números enteros válidos
     page = parseInt(page, 10) || 1;
-    const limitNumber = parseInt(limit, 10) || 5;
+    const limitNumber = parseInt(limit, 10) || 5;     
     try {
         const filterParams = { categoria: categoria === 'productos' ? null : categoria, page, limit: limitNumber, sort, query };
         const result = await productService.filterByCategory(filterParams);
