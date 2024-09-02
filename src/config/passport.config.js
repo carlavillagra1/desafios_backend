@@ -1,55 +1,61 @@
-const passport = require('passport')
-const local = require('passport-local')
-const githubStrategy = require('passport-github2')
-const User = require('../dao/models/user.model.js')
-const logger = require('../utils/logger.js')
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
+const User = require('../dao/models/user.model.js');
+const logger = require('../utils/logger.js');
 const dotenv = require('dotenv');
-dotenv.config()
-
-const localStrategy = local.Strategy
+dotenv.config();
 
 const initializePassport = () => {
-    //estrategias
-    passport.use('github', new githubStrategy({
+    // Estrategia de GitHub
+    passport.use('github', new GitHubStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
         callbackURL: process.env.CALLBACK_URL
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            console.log(profile)
-            let user = await User.findOne({ email: profile._json.email })
+            logger.info('Perfil de GitHub:', profile);
+            
+            let email = profile._json.email;
+            
+            if (!email) {
+                logger.warning('El perfil de GitHub no tiene un email público.');
+                return done(null, false, { message: 'El perfil de GitHub no tiene un email público.' });
+            }
+            
+            let user = await User.findOne({ email });
             if (!user) {
                 let newUser = {
-                    nombre: profile._json.name.split(' ')[0], // Assuming first part of name
-                    apellido: profile._json.name.split(' ').slice(1).join(' ') || "N/A", // Rest as apellido or "N/A"
-                    email: profile._json.email,
+                    nombre: profile._json.name ? profile._json.name.split(' ')[0] : 'Usuario', 
+                    apellido: profile._json.name ? profile._json.name.split(' ').slice(1).join(' ') : "N/A",
+                    email,
                     age: 89,
                     password: "12345",
                     rol: "user"
-                }
-                let result = await User.create(newUser)
-                done(null, result)
-            }
-            else {
-                done(null, user)
+                };
+                let result = await User.create(newUser);
+                return done(null, result);
+            } else {
+                return done(null, user);
             }
         } catch (error) {
-            logger.error('Error al ingresar con github' + error.message)
-            done(error)
+            logger.error('Error al ingresar con GitHub: ' + error.message);
+            return done(error);
         }
+    }));
 
-    }
-    ))
-
-    passport.use('register', new localStrategy(
-        { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
-            const { nombre, apellido, email, age, role } = req.body
+    // Estrategia de registro
+    passport.use('register', new LocalStrategy(
+        { passReqToCallback: true, usernameField: 'email' }, 
+        async (req, username, password, done) => {
+            const { nombre, apellido, email, age, role } = req.body;
             try {
-                let user = await User.findOne({ email: username })
+                let user = await User.findOne({ email: username });
                 if (user) {
-                    logger.warning("El usuario ya existe")
-                    return done(null, false)
+                    logger.warning("El usuario ya existe");
+                    return done(null, false, { message: 'El usuario ya existe' });
                 }
+                
                 const newUser = {
                     nombre,
                     apellido,
@@ -58,41 +64,55 @@ const initializePassport = () => {
                     role,
                     password
                 };
-                let result = await User.create(newUser)
-                return done(null, result)
+
+                let result = await User.create(newUser);
+                return done(null, result);
             } catch (error) {
-                logger.error('Error al obtener el usuario' + error.message)
-                return done("Error al obtener el usuario" + error)
+                logger.error('Error al registrar el usuario: ' + error.message);
+                return done(error);
             }
         }
-        ))
-        passport.use('login', new localStrategy({usernameField:'email'}, async(username, password, done) =>{
+    ));
+
+    // Estrategia de login
+    passport.use('login', new LocalStrategy(
+        { usernameField: 'email' }, 
+        async (username, password, done) => {
             try {
-                const user = await User.findOne({email: username})
-                if(!user){
-                    logger.warning("El usuario no existe")
-                    return done(null, user)
+                const user = await User.findOne({ email: username });
+                if (!user) {
+                    logger.warning("El usuario no existe");
+                    return done(null, false, { message: 'El usuario no existe' });
                 }
-        const isMatch = await user.comparePassword(password);
-        console.log('¿Las contraseñas coinciden?', isMatch);
-        if (!isMatch) {
-            return done(null, false);
-        }
-                return done(null, user)
+
+                const isMatch = await user.comparePassword(password);
+                logger.info('¿Las contraseñas coinciden?', isMatch);
+                if (!isMatch) {
+                    return done(null, false, { message: 'Contraseña incorrecta' });
+                }
+
+                return done(null, user);
             } catch (error) {
-                return done(error)
+                logger.error('Error en la autenticación de usuario: ' + error.message);
+                return done(error);
             }
-        }))
+        }
+    ));
+
+    // Serialización de usuarios
     passport.serializeUser((user, done) => {
-        done(null, user._id)
-    })
+        done(null, user._id);
+    });
+
     passport.deserializeUser(async (id, done) => {
-        let user = await User.findById(id)
-        done(null, user)
-    })
+        try {
+            const user = await User.findById(id);
+            done(null, user);
+        } catch (error) {
+            logger.error('Error al deserializar el usuario: ' + error.message);
+            done(error);
+        }
+    });
+};
 
-}
-    
-
-
-module.exports = { initializePassport }
+module.exports = { initializePassport };
