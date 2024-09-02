@@ -57,7 +57,7 @@
     justify-content: center;
     gap: 10px;
 }
- .paginate a{
+.paginate a{
     width: 200px;
     display: flex;
     justify-content: center;
@@ -189,6 +189,7 @@
     border: 2px solid gray;
     padding: 10px;
 }
+
 .precios{
     width: 120px;
     border-radius: 10px;
@@ -267,6 +268,9 @@
     flex-direction: row;
     justify-content: space-evenly;
 }
+.saludoUser{
+    padding: 10px;
+}
 .logo{
     color: gray;
     font-weight: bolder;
@@ -301,10 +305,26 @@
     border-radius: 10px;
     border: none;
     font-size: 12px;
+    margin: 5px;
+}
+.btnPremium{
+    width: 150px;
+    padding: 10px;
+    background: gray;
+    color: aliceblue;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
+    margin: 5px;
+}
+.btnPremium a{
+    text-decoration: none;
+    color: aliceblue;
 }
 .btnCarrito a{
-     text-decoration: none;
-     color: aliceblue;
+    text-decoration: none;
+    color: aliceblue;
 }
 .btnCerrar{
     width: 120px;
@@ -469,20 +489,41 @@
 }
 .perfil{
     border: 2px solid gray;
-    width: 500px;
-    height: 500px;
-    padding: 10px;
+    width: 90%;
+    height: 550px;
     border-radius: 10px;
     font-weight: bold;
     align-items: center;
     text-align: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-evenly;
+    
+}
+.infoP{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.documento{
+    background-color: gray;
+    padding: 10px;
+    width: 500px;
+    height: 150px;
+    padding: 10px;
+    
+}
+.documento input{
+    background: none;
+    border: solid  2px gray;
 }
 
+.btnCajaPadre{
+    padding: 10px;
+}
 .btnCambiarRol {
-    background-color: #007bff;
+    background-color: #27292b;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -491,5 +532,5 @@
 }
 
 .btnCambiarRol:hover {
-    background-color: #0056b3;
+    background-color: #667c94;
 }

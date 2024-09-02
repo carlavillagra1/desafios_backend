@@ -20,6 +20,15 @@ class UserService {
         }
     }
 
+    async getUserById(id) {
+        try {
+            const user = await userManager.getUserById(id);
+            return user;
+        } catch (error) {
+            throw new Error("Error al obtener el usuario por ID: " + error.message);
+        }
+    }
+
     async getUserByEmail(email) {
         try {
             const user = await userManager.getUserByEmail(email);
@@ -30,6 +39,17 @@ class UserService {
             throw new Error("Error al obtener el usuario: " + error.message);
         }
     }
+    async updateUser(user) {
+        try {
+            const updatedUser = await userManager.updateUser(user._id, user);
+            logger.info('Usuario actualizado con éxito', { userId: user._id });
+            return updatedUser;
+        } catch (error) {
+            logger.error('Error al actualizar el usuario: ' + error.message);
+            throw new Error('Error al actualizar el usuario: ' + error.message);
+        }
+    }
+    
 
     async updateUserPassword(userId, newPassword) {
         try {

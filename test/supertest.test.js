@@ -166,7 +166,7 @@ describe('Testing', function () {
                 const expectedProduct = {
                     product: product._id.toString(),
                     quantity: 2
-               };
+            };
     
                 const cartProducts = addProductResponse.body.cart.products;
                 const addedProduct = cartProducts.find(p => p.product === product._id.toString());
@@ -183,7 +183,7 @@ describe('Testing', function () {
                     throw new Error('Carrito o producto no encontrado en la base de datos');
                 }
                 await requester
-                     .post(`/api/carts/${cart._id}/product/${product._id}`)
+                    .post(`/api/carts/${cart._id}/product/${product._id}`)
                     .set('Cookie', cookie)
                     .send({ quantity: 2 });
     

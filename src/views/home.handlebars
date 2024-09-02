@@ -13,6 +13,12 @@
             <div class="btnPerfil">
                 <a href="/api/views/profile" class="btnPerfil">Perfil</a>
             </div>
+            {{#if (eq user.role 'premium')}}
+            <div class="btnPremium">
+                <a href="/api/views/realTimeProducts" class="btnPremium">Subir productos</a>
+            </div>
+        {{/if}}
+
             <form action="/api/session/logout" method="POST">
                 <button type="submit" class="btnCerrar">Cerrar Sesión</button>
             </form>

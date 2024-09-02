@@ -7,7 +7,6 @@ class UserRepository {
             return newUser;
         } catch (error) {
             if (error.code === 11000) {
-                // Error de clave duplicada (email ya existente)
                 throw new Error('El email ya está en uso');
             }
             throw new Error('Error al crear el usuario: ' + error.message);
@@ -32,6 +31,15 @@ class UserRepository {
             throw new Error("Error al obtener el usuario por ID: " + error.message);
         }
     }
+    async updateUser(userId, updatedData) {
+        try {
+            const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+            return updatedUser;
+        } catch (error) {
+            throw new Error("Error al actualizar el usuario: " + error.message);
+        }
+    }
+    
 
     async updateUserPassword(userId, newPassword) {
         try {

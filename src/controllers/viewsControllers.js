@@ -113,9 +113,10 @@ exports.register = (req, res) => {
 
 exports.profile = (req, res) => {
     const user = new UserDTO(req.session.user);
-    console.log('Datos de sesión:', req.session.user);
+    console.log('UserDTO:', user); // Verifica la salida de UserDTO
     res.render('profile', { style: 'index.css', user });
 };
+
 
 // Vista para solicitar el restablecimiento de contraseña
 exports.requestPasswordReset = (req, res) => {

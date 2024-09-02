@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { sendTicketByEmail } = require('../public/js/ticketEmail.js');
 const UserService = require('../services/userService.js');
 const userService = new UserService();
+const UserDTO = require('../dao/dto/userDTO.js')
 require('dotenv').config(); 
 
 
@@ -33,21 +34,35 @@ exports.login = async (req, res) => {
         logger.warning('Intento de inicio de sesión fallido con datos incompletos', { requestData: req.body });
         return res.status(400).send({ status: "error", error: "Datos incompletos" });
     }
+
     try {
-        // Configurar la sesión del usuario
+        // Actualizar "last_connection" al momento del login
+        req.user.last_connection = new Date();
+        await req.user.save();
+
+        // Verificar si la actualización de `last_connection` se guardó correctamente
+        if (!req.user.last_connection) {
+            logger.error('Error al actualizar la última conexión del usuario');
+            return res.status(500).send({ status: "error", message: 'Error al actualizar la última conexión' });
+        }
+
+        // Configurar la sesión del usuario usando UserDTO
+        const userDTO = new UserDTO(req.user);
         req.session.user = {
-            id: req.user._id,
-            nombre: req.user.nombre,
-            apellido: req.user.apellido,
-            email: req.user.email,
-            age: req.user.age,
-            role: req.user.role
+            id: userDTO._id,
+            nombre: userDTO.nombre,
+            apellido: userDTO.apellido,
+            email: userDTO.email,
+            age: userDTO.age,
+            role: userDTO.role,
+            last_connection: userDTO.last_connection 
         };
+
         // Enviar respuesta según el rol del usuario
         if (req.user.role === 'admin') {
-            return res.status(200).send({ status: "success", message: "Inicio de sesión exitoso", redirect: '/api/views/realtimeProducts' });
+            return res.redirect('/api/views/realtimeProducts');
         } else {
-            return res.status(200).send({ status: "success", message: "Inicio de sesión exitoso", redirect: '/api/views/home' });
+            return res.redirect('/api/views/home');
         }
     } catch (error) {
         logger.error('Error al iniciar sesión: ' + error.message);
@@ -55,17 +70,33 @@ exports.login = async (req, res) => {
     }
 };
 
-
 exports.failLogin = async (req, res) => {
     logger.error('Login fallido');
     res.send({error: "Login fallido"});
 };
 
-exports.logout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) return res.status(500).send('Error al cerrar sesión');
-        return res.status(200).send({ status: "success", message: "Sesión cerrada exitosamente", redirect: '/api/views/login' });
-    });
+exports.logout = async (req, res) => {
+    try {
+        const userId = req.session.user.id || req.session.user._id;
+        // Buscar al usuario por ID para actualizar "last_connection"
+        const user = await User.findById(userId);
+        if (user) {
+            user.last_connection = new Date();
+            await user.save();
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                logger.error('Error al cerrar sesión: ' + err.message);
+                return res.status(500).send('Error al cerrar sesión');
+            }
+
+            // Redirigir después de cerrar sesión
+            res.redirect('/api/views/login');
+        });
+    } catch (error) {
+        logger.error('Error al cerrar sesión: ' + error.message);
+        res.status(500).send({ status: "error", message: 'Error al cerrar sesión' });
+    }
 };
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
@@ -161,20 +192,73 @@ exports.githubCallback = async (req, res) => {
 };
 
 
-exports.changeRoles = async(req, res) =>{
+exports.changeRoles = async (req, res) => {
     try {
-        const { uid } = req.params;
-        const user = await userService.getUserById(uid);
-        
+        const { id } = req.params;
+        const { role } = req.body;
+        if (role !== 'user' && role !== 'premium') {
+            return res.status(400).json({ error: 'Rol no válido proporcionado' });
+        }
+        const user = await userService.getUserById(id);
         if (!user) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
-
-        user.role = user.role === 'user' ? 'premium' : 'user';
+        // Verificar si el usuario tiene al menos 3 documentos para cambiar a premium
+        if (role === 'premium' && user.documents.length < 3) {
+            return res.status(400).json({ message: 'El usuario debe tener al menos 3 documentos subidos para cambiar al rol premium' });
+        }
+        user.role = role;
         await userService.updateUser(user);
-
-        res.status(200).json({ message: `Rol de usuario actualizado a ${user.role}` });
+        // Actualizar la sesión del usuario con el nuevo rol
+        req.session.user.role = role;
+        req.session.save((err) => {  
+            if (err) {
+                return res.status(500).json({ error: 'No se pudo actualizar la sesión' });
+            }
+            res.status(200).json({ message: `Rol de usuario actualizado a ${user.role}` });
+        });
     } catch (error) {
+        console.error('Error al actualizar el rol del usuario:', error);
         res.status(500).json({ error: 'Error al actualizar el rol del usuario: ' + error.message });
     }
-}
+};
+
+
+exports.uploadDocument = async (req, res) => {
+    try {
+        if (!req.file) {
+            logger.warning('No se ha proporcionado ningún archivo para cargar');
+            return res.status(400).send('No se ha proporcionado ningún archivo');
+        }
+        const userId = req.params.id; 
+        const user = await userService.getUserById(userId);
+        if (!user) {
+            logger.warning(`Usuario no encontrado para el ID: ${userId}`);
+            return res.status(404).send('Usuario no encontrado');
+        }
+        // Crear el nuevo documento
+        const newDocument = {
+            name: req.file.originalname,
+            
+            reference: req.file.path // Ruta o enlace al archivo
+        };
+        // Agregar el nuevo documento al array 'documents' del usuario
+        user.documents.push(newDocument);
+        // Actualizar el estado del documento subido
+        const documentType = req.file.mimetype.split('/')[1];
+        user.status[documentType] = true; // Marcar como subido
+
+        // Actualizar el usuario con el nuevo documento
+        const updatedUser = await userService.updateUser(user);
+        logger.info(`Archivo ${req.file.filename} subido y guardado con éxito en la base de datos`);
+        res.status(200).send({
+            status: 'success',
+            message: 'Archivo subido y guardado con éxito',
+            file: req.file,
+            user: updatedUser
+        });
+    } catch (error) {
+        logger.error('Error al subir y guardar el archivo: ' + error.message);
+        res.status(500).send('Error al subir y guardar el archivo');
+    }
+};

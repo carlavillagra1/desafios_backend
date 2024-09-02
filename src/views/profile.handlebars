@@ -1,10 +1,13 @@
 <div class="container">
     <div class="perfil">
+        <div class="infoP">
         <h2>Perfil de Usuario</h2>
+        <p>Id: {{user._id}}</p> 
         <p>Nombre: {{user.nombre}}</p>
         <p>Apellido: {{user.apellido}}</p>
         <p>Email: {{user.email}}</p>
         <p>Edad: {{user.age}}</p>
+        <p>Ultimo inicio de sesion: {{user.last_connection}}</p>
 
         <form action="/api/session/logout" method="POST">
             <button type="submit" class="btnCerrar">Cerrar Sesión</button>
@@ -17,14 +20,63 @@
             <a href="/api/views/cart">Ir al carrito</a>
         </div>
 
-      <!-- Botón para cambiar el rol -->
-<form action="/api/users/premium/{{uid}}" method="POST" class="form-change-role">
-    <!-- Campo oculto para simular el método PUT -->
-    <input type="hidden" name="_method" value="PUT">
-    <button type="submit" class="btnCambiarRol">
-        Cambiar a {{#if (eq user.role 'user')}}Premium{{else}}User{{/if}}
-    </button>
-</form>
+        </div>
+
+    <div class="documento">
+    <!-- Formulario para subir documentos -->
+        <h3>Subir Documentos</h3>
+        <form action="/api/session/{{user._id}}/documents" method="POST" enctype="multipart/form-data">
+            <input type="file" name="document" required>
+            <button type="submit" class="btnSubirDocumento">Subir Documento</button>
+        </form>
+        <div class="btnCajaPadre"> 
+        <!-- Botón para cambiar el rol -->
+    <form onsubmit="event.preventDefault(); cambiarRol('{{user._id}}', '{{#if (eq user.role 'user')}}premium{{else}}user{{/if}}');">
+        <button type="submit" class="btnCambiarRol">
+            Cambiar a {{#if (eq user.role 'user')}}Premium{{else}}User{{/if}}
+        </button>
+    </form>
+        </div>
+    </div>
+
 
     </div>
 </div>
+
+<script>
+    function cambiarRol(userId, nuevoRol) {
+    fetch(`/api/session/premium/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ role: nuevoRol })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Verifica si la respuesta no es OK (estatus 400 o 500)
+            return response.json().then(error => {
+                // Muestra un mensaje específico si el error es relacionado con documentos
+                if (error.message === 'El usuario debe tener al menos 3 documentos subidos para cambiar al rol premium') {
+                    alert('El usuario debe tener al menos 3 documentos subidos para cambiar al rol premium');
+                } else {
+                    // Si hay otros errores, mostrar el mensaje genérico
+                    alert('Error al cambiar el rol: ' + error.message);
+                }
+                throw new Error(error.message);  // Lanza el error para detener la ejecución del flujo exitoso
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message || 'Rol actualizado con éxito');
+        window.location.reload(); // Recargar la página para reflejar los cambios
+    })
+    .catch(error => {
+        console.error('Error al cambiar el rol:', error);
+        // La alerta de error se muestra anteriormente, así que aquí no es necesaria
+    });
+}
+
+
+</script>

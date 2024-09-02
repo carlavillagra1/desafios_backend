@@ -84,7 +84,6 @@ exports.updateCart = async (req, res) => {
     }
 };
 
-// cartControllers.js
 exports.addProductToCart = async (req, res) => {
     try {
         const { cid, id } = req.params;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt')
 const Cart = require('./carts.model.js')
-const {createHash} = require('../../public/js/utils.js')
+const { createHash } = require('../../public/js/utils.js')
 
 const userCollection = "Users";
 
@@ -12,9 +12,21 @@ const userSchema = new mongoose.Schema({
     age: { type: Number },
     password: { type: String, required: true },
     role: { type: String, enum: ['admin', 'user', 'premium'], default: 'user' },
-    cart: { type: mongoose.Schema.Types.ObjectId, ref: 'carts' }
+    cart: { type: mongoose.Schema.Types.ObjectId, ref: 'carts' },
+    documents: [
+        {
+            name: {type: String,
+                required: true
+            },
+            reference: {
+                type: String,
+                required: true
+            }
+        }
+    ],
+    last_connection: { type: Date, default: null},
+    status: { type: Object, default: {} }, // Añadido para registrar el estado de los documentos subidos
 });
-
 
 
 userSchema.pre('save', async function (next) {

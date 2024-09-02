@@ -53,12 +53,12 @@ describe('Testing sessions', function () {
         cookie = loginResponse.headers['set-cookie'][0];
     });
 
-       it('El endpoint POST /logout debe cerrar sesión', async () => {
+    it('El endpoint POST /logout debe cerrar sesión', async () => {
         const response = await requester
             .post('/api/session/logout')
             .set('Cookie', cookie);
 
-        expect(response.status).to.equal(200);
+        expect(response.status).to.equal(302);
         expect(response.body).to.deep.equal({
             status: "success",
             message: "Sesión cerrada exitosamente",
