@@ -143,11 +143,11 @@ exports.clearCart = async (req, res) => {
 
 exports.purchaseCart = async (req, res) => {
     try {
-        if (!req.session.user || !req.session.user._id) {
+        if (!req.session.user || !req.session.user._id || !req.session.user.id)  {
             logger.warning('Intento de compra sin autenticación', { user: req.session.user });
             return res.status(401).json({ message: 'Autenticación requerida' });
         }
-        const userId = req.session.user._id;
+        const userId = req.session.user._id || req.session.user.id;
         const userEmail = req.session.user.email;
         const { cid } = req.params;
 
