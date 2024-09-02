@@ -109,7 +109,7 @@ exports.addProductToCart = async (req, res) => {
         }
 
         const cart = await cartService.addProductToCart(cid, id, quantity, req.session.user);
-        res.status(200).json({ result: 'success', cart });
+        res.redirect('/api/views/cart');
     } catch (error) {
         logger.error('Error al agregar el producto al carrito:', error.message);
         res.status(500).send('Error al agregar el producto al carrito: ' + error.message);
