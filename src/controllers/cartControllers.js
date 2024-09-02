@@ -172,7 +172,8 @@ exports.purchaseCart = async (req, res) => {
             <p>Fecha: ${ticket.createdAt}</p>
         `;
 
-        // Enviar correo electrónico
+
+    // Enviar correo electrónico
         await ticketService.endTicketEmail(userEmail, subject, text, html);
 
         res.status(201).json({ message: 'Compra finalizada con éxito. Ticket creado y correo enviado', payload: ticket });
