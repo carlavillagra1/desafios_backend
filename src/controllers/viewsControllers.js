@@ -4,6 +4,8 @@ const productManagerMongo = require("../dao/productRepository.js");
 const productManager = new productManagerMongo();
 const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
+const UserService = require('../services/userService.js')
+const userService = new UserService()
 const UserDTO = require("../dao/dto/userDTO.js")
 const logger = require('../utils/logger.js')
 
@@ -132,4 +134,14 @@ exports.resetPassword = (req, res) => {
 // Vista para el caso en que el enlace ha expirado
 exports.resetLinkExpired = (req, res) => {
     res.render('ResetLinkExpired', { style: 'index.css' });
+};
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await userService.getAllUsers(); // Aquí llamas al servicio que obtiene todos los usuarios
+        const usersDTO = users.map(user => new UserDTO(user)); // Convertir 
+        res.render('PanelAdmin', { users: usersDTO , style: 'index.css'}); 
+    } catch (error) {
+        console.error('Error al obtener la lista de usuarios:', error);
+        res.status(500).send('Error al obtener la lista de usuarios');
+    }
 };

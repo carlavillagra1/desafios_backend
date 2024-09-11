@@ -49,14 +49,13 @@ class ProductService {
 
     async deleteProduct(id, userId, userRole) {
         try {
-            const result = await productManager.deleteProduct(id, userId, userRole);
-            logger.info('Producto eliminado exitosamente', { id });
-            return result;
+            return await productManager.deleteProduct(id, userId, userRole);
         } catch (error) {
             logger.error('Error al eliminar el producto: ' + error.message);
             throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
+    
     
     async paginateProducts(params) {
         try {

@@ -3,6 +3,7 @@ const cartsModel  = require("./models/carts.model.js")
 const CustomError = require('../services/errors/CustomError.js');
 const { generateProductErrorInfo } = require('../services/errors/info.js');
 const EErrors = require('../services/errors/enums.js');
+const User = require('../dao/models/user.model.js')
 
 class productManagerMongo {
 
@@ -20,7 +21,16 @@ class productManagerMongo {
             if (user.role !== 'admin' && user.role !== 'premium') {
                 throw new Error('No tienes permiso para crear productos.');
             }
-            
+    
+            const existingProduct = await productModel.findOne({ code });
+            if (existingProduct) {
+                throw new CustomError({
+                    name: 'DuplicateCodeError',
+                    message: `Error al crear el producto: El código ${code} ya está en uso.`,
+                    code: EErrors.DUPLICATE_CODE_ERROR
+                });
+            }
+    
             const newProduct = await productModel.create({
                 title,
                 description,
@@ -29,7 +39,7 @@ class productManagerMongo {
                 code,
                 stock,
                 category,
-                owner: user._id 
+                owner: user._id || user.id
             });
     
             return newProduct;
@@ -41,6 +51,7 @@ class productManagerMongo {
             }
         }
     }
+    
     
 
     async readProducts() {
@@ -84,18 +95,26 @@ class productManagerMongo {
     
     async deleteProduct(id, userId, userRole) {
         try {
-            // Buscar el producto en la base de datos
-            const product = await productModel.findById(id);
+            // Buscar el producto en la base de datos y poblar el campo 'owner'
+            const product = await productModel.findById(id).populate('owner');
+            
             // Verificar si el producto existe
             if (!product) {
                 throw new Error('Producto no encontrado');
             }
+            
+            // Verificar si el campo 'owner' está poblado
+            if (!product.owner) {
+                throw new Error('El producto no tiene un propietario asignado');
+            }
+    
             // Verificar si el usuario tiene permiso para eliminar el producto
-            const isOwner = product.owner.toString() === userId.toString();
+            const isOwner = product.owner._id.toString() === userId.toString();
             const isAdmin = userRole === 'admin';
             if (!isOwner && !isAdmin) {
                 throw new Error('No tienes permiso para eliminar este producto');
             }
+            
             // Eliminar el producto
             const result = await productModel.deleteOne({ _id: id });
             return result;
@@ -103,8 +122,6 @@ class productManagerMongo {
             throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
-    
-    
     
     
     async  paginateProduct({ page = 1, limit = 5, sort = '', query = '', categoria = '' }) {

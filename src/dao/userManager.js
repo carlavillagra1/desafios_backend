@@ -12,8 +12,15 @@ class UserRepository {
             throw new Error('Error al crear el usuario: ' + error.message);
         }
     }
+    async getAllUsers() {
+        try {
+            const users = await User.find({}, 'nombre apellido email last_connection role');
+            return users;
+        } catch (error) {
+            throw new Error('Error al obtener los usuarios: ' + error.message);
+        }
+    }
     
-
     async getUserByEmail(email) {
         try {
             const user = await User.findOne({ email });

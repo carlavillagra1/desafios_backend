@@ -4,6 +4,7 @@ const TicketService = require("../services/ticketService.js");
 const ticketService = new  TicketService()
 const ProductService = require('../services/productService.js')
 const productService = new ProductService()
+const UserDTO = require('../dao/dto/userDTO.js')
 
 const logger = require('../utils/logger.js')
 
@@ -95,11 +96,13 @@ exports.addProductToCart = async (req, res) => {
             logger.error('Producto no encontrado', { productId: id });
             return res.status(404).send('Producto no encontrado');
         }
-        const userId = req.session.user ? req.session.user._id : null;
+        const userId = req.session.user ? (req.session.user._id || req.session.user.id) : null;
+    
         if (req.session.user && req.session.user.role === 'premium' && product.owner.toString() === userId) {
-            logger.warning('Intento de agregar un producto propio al carrito', { productId: id, userId });
+            logger.warning('Intento de agregar un producto propio al carrito');
             return res.status(403).json({ message: 'No puedes agregar tu propio producto al carrito' });
         }
+        
 
         // Si quantity no está definido, establece un valor predeterminado de 1
         quantity = quantity ? Number(quantity) : 1;
@@ -140,21 +143,17 @@ exports.clearCart = async (req, res) => {
         res.status(500).json({ message: 'Error al vaciar el carrito' });
     }
 };
-
 exports.purchaseCart = async (req, res) => {
     try {
         if (!req.session.user || (!req.session.user._id && !req.session.user.id)) {
             logger.warning('Intento de compra sin autenticación');
             return res.status(401).json({ message: 'Autenticación requerida' });
         }
-        
         const userId = req.session.user._id || req.session.user.id;
-        const userEmail = req.session.user.email;
+        const userEmail = req.user.email; 
         const { cid } = req.params;
-
         // Crear el ticket usando el servicio de tickets
         const ticket = await ticketService.createTicket(userId, cid);
-
         // Verificar que el ticket y sus productos estén definidos
         if (!ticket || !ticket.cart || !ticket.cart.products) {
             logger.error("El ticket no contiene un carrito o productos válidos");
@@ -173,8 +172,7 @@ exports.purchaseCart = async (req, res) => {
             <p>Fecha: ${ticket.createdAt}</p>
         `;
 
-
-    // Enviar correo electrónico
+        // Enviar correo electrónico
         await ticketService.endTicketEmail(userEmail, subject, text, html);
 
         res.status(201).json({ message: 'Compra finalizada con éxito. Ticket creado y correo enviado', payload: ticket });

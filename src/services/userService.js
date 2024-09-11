@@ -19,12 +19,24 @@ class UserService {
             throw new Error("Error al registrar el usuario: " + error.message);
         }
     }
+    async getAllUsers() {
+        try {
+            const users = await userManager.getAllUsers();
+            logger.info('Usuarios obtenidos')
+            return users;
+        } catch (error) {
+            logger.error('Error al obtener todos los usuarios' + error.message)
+            throw new Error('Error al obtener todos los usuarios: ' + error.message);
+        }
+    }
 
     async getUserById(id) {
         try {
             const user = await userManager.getUserById(id);
+            logger.info('Usuario obtenido por id', {id})
             return user;
         } catch (error) {
+            logger.error('Error al obtener el usuario por ID' + error.message)
             throw new Error("Error al obtener el usuario por ID: " + error.message);
         }
     }
@@ -35,8 +47,8 @@ class UserService {
             logger.info('Usuario encontrado', { email })
             return user;
         } catch (error) {
-            logger.error('Error al obtener el usuario' + error.message)
-            throw new Error("Error al obtener el usuario: " + error.message);
+            logger.error('Error al obtener el usuario por email' + error.message)
+            throw new Error("Error al obtener el usuario por email: " + error.message);
         }
     }
     async updateUser(user) {

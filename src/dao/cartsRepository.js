@@ -38,7 +38,7 @@ class cartRepository{
     async cartFindOne(cid) {
         try {
             let cart = await cartsModel.findOne({ _id: cid });
-            console.log("Carrito encontrado:", JSON.stringify(cart, null, '\t')); 
+            // console.log("Carrito encontrado:", JSON.stringify(cart, null, '\t')); 
             if (!cart) {
                 cart = new cartsModel({ _id: cid, products: [], total: 0 });
                 await cart.save();

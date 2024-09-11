@@ -11,7 +11,7 @@ btnAgregar.addEventListener('click', () => {
     const code = document.getElementById('code').value;
     const stock = document.getElementById('stock').value;
     const category = document.getElementById('category').value;
-    const owner = user._id;
+    const owner = user._id || user.id;
     socket.emit('NewProduct', { title, description, price, thumbnail, code, stock, category, owner });
 });
 

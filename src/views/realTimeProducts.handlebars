@@ -1,16 +1,29 @@
 <div class="containerREALTIME">
         <div class="saludo">
-                <h2>Bienvenido administrador {{user.nombre}} {{user.apellido}} </h2>
+                <h2>Bienvenido {{user.nombre}} {{user.apellido}} </h2>
                 <p>En este panel puedes agregar los productos que desees.</p>
 
                 <div class="btnPerfil">
                         <a href="/api/views/profile" class="btnPerfil">Perfil</a>
                 </div>
+
+                {{#if (eq user.role 'admin')}}
+                <div class="btnPremium">
+                        <a href="/api/views/PanelAdmin" class="btnAdmin">Ver usuarios</a>
+                </div>
+                {{/if}}
+
+                {{#if (eq user.role 'premium')}}
+                <div class="btnPremium">
+                        <a href="/api/views/home" class="btnPremium">Home</a>
+                </div>
+                {{/if}}
+
                 <form action="/api/session/logout" method="POST">
                         <button type="submit" class="btnCerrar">Cerrar Sesión</button>
                 </form>
-
         </div>
+
         <div class="containerForm">
                 <div class="form">
                         <label for="title">Titulo</label>
@@ -36,7 +49,7 @@
         </div>
 </div>
 <script>
-    const user = {{{json user}}}; 
+        const user = {{{ json user }}}; 
 </script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/realtimeProducts.js"></script>

@@ -534,3 +534,23 @@
 .btnCambiarRol:hover {
     background-color: #667c94;
 }
+
+.listUsers{
+    background: gainsboro;
+    width: 950px;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+
+}
+.listUsers table{
+    padding: 10px;
+    overflow-y: scroll;
+}
+.listUsers tbody{
+    background: rgb(223, 214, 214);
+    padding: 10px;
+    
+}
+
+

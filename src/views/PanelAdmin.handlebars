@@ -1,0 +1,85 @@
+<div class="listUsers">
+    <h1>Lista de usuarios</h1>
+    <button onclick="eliminarUsuariosInactivos()" class="btnEliminarInactivos">Eliminar usuarios inactivos</button>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Ultima conexion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+            <tr>
+                <td>{{_id}}</td>
+                <td>{{nombre}}</td>
+                <td>{{apellido}}</td>
+                <td>{{email}}</td>
+                <td>{{role}}</td>
+                <td>{{last_connection}}</td>
+                <td>
+                    <form onsubmit="event.preventDefault(); cambiarRol('{{_id}}', '{{#if (eq role 'user')}}premium{{else}}user{{/if}}');">
+                        <button type="submit" class="btnCambiarRol">
+                            Cambiar a {{#if (eq role 'user')}}Premium{{else}}User{{/if}}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div class="volver">
+        <a href="/api/views/realTimeProducts"> Volver  </a>
+    </div>
+</div>
+
+<script>
+    // Función para cambiar el rol de un usuario
+    function cambiarRol(userId, nuevoRol) {
+        fetch(`/api/session/premium/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ role: nuevoRol })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`El rol ha sido cambiado a ${nuevoRol}`);
+                location.reload(); // Recargar la página para ver el cambio
+            } else {
+                alert('Error al cambiar el rol');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Función para eliminar usuarios inactivos
+    function eliminarUsuariosInactivos() {
+        if (confirm('¿Estás seguro de que deseas eliminar a los usuarios inactivos?')) {
+            fetch('/api/session/users', {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error al eliminar usuarios inactivos');
+                } else {
+                    alert(`${data.message}`);
+                    location.reload(); // Recargar la página para actualizar la lista de usuarios
+                }
+            })
+            .catch(error => {
+                console.error('Error al eliminar usuarios inactivos:', error);
+            });
+        }
+    }
+</script>

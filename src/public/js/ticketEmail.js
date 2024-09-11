@@ -9,10 +9,11 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
 });
 
 async function sendTicketByEmail(userEmail, subject, text, html) {
+    console.log('Enviando correo a:', userEmail); // Verifica el email
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: userEmail,

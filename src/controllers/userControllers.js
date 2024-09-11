@@ -3,10 +3,11 @@ const passport = require("passport");
 const logger = require('../utils/logger.js')
 const jwt = require('jsonwebtoken');
 const { sendTicketByEmail } = require('../public/js/ticketEmail.js');
+const {  deleteInactiveUsers } = require('../public/js/eliminacionPorEmail.js')
 const UserService = require('../services/userService.js');
 const userService = new UserService();
 const UserDTO = require('../dao/dto/userDTO.js')
-require('dotenv').config(); 
+require('dotenv').config();
 
 
 exports.register = async (req, res) => {
@@ -15,7 +16,7 @@ exports.register = async (req, res) => {
         return res.status(400).send('Datos incompletos');
     }
     try {
-        res.status(200).send({status: "success", message: "usuario registrado"});
+        res.status(200).send({ status: "success", message: "usuario registrado" });
         logger.info('Usuario registrado con exito')
     } catch (error) {
         logger.error('Error al registrarse' + error.message)
@@ -26,7 +27,7 @@ exports.register = async (req, res) => {
 
 exports.failRegister = async (req, res) => {
     logger.info('Estrategia fallida');
-    res.send({error: "Fallo"});
+    res.send({ error: "Fallo" });
 };
 
 exports.login = async (req, res) => {
@@ -46,16 +47,15 @@ exports.login = async (req, res) => {
             return res.status(500).send({ status: "error", message: 'Error al actualizar la última conexión' });
         }
 
-        // Configurar la sesión del usuario usando UserDTO
-        const userDTO = new UserDTO(req.user);
+        // Configurar la sesión del usuario
         req.session.user = {
-            id: userDTO._id,
-            nombre: userDTO.nombre,
-            apellido: userDTO.apellido,
-            email: userDTO.email,
-            age: userDTO.age,
-            role: userDTO.role,
-            last_connection: userDTO.last_connection 
+            id: req.user._id,
+            nombre: req.user.nombre,
+            apellido: req.user.apellido,
+            email: req.user.email, 
+            age: req.user.age,
+            role: req.user.role,
+            last_connection: req.user.last_connection,
         };
 
         // Enviar respuesta según el rol del usuario
@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
 
 exports.failLogin = async (req, res) => {
     logger.error('Login fallido');
-    res.send({error: "Login fallido"});
+    res.send({ error: "Login fallido" });
 };
 
 exports.logout = async (req, res) => {
@@ -107,7 +107,7 @@ exports.requestPasswordReset = async (req, res) => {
             return res.status(404).send('Usuario no encontrado');
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const resetLink = `http://localhost:8080/api/views/restablecerPass?token=${encodeURIComponent(token)}`;        
+        const resetLink = `http://localhost:8080/api/views/restablecerPass?token=${encodeURIComponent(token)}`;
         const html = `<p>Haz clic en <a href="${resetLink}">este enlace</a> para restablecer tu contraseña. Este enlace expirará en 1 hora.</p>`;
         await sendTicketByEmail(email, 'Restablecimiento de contraseña', '', html);
         res.status(200).send('Correo de restablecimiento de contraseña enviado');
@@ -184,7 +184,7 @@ exports.changePassword = async (req, res) => {
     }
 };
 
-exports.github = passport.authenticate('github', {scope: 'user.email'});
+exports.github = passport.authenticate('github', { scope: 'user.email' });
 
 exports.githubCallback = async (req, res) => {
     req.session.user = req.user;
@@ -211,7 +211,7 @@ exports.changeRoles = async (req, res) => {
         await userService.updateUser(user);
         // Actualizar la sesión del usuario con el nuevo rol
         req.session.user.role = role;
-        req.session.save((err) => {  
+        req.session.save((err) => {
             if (err) {
                 return res.status(500).json({ error: 'No se pudo actualizar la sesión' });
             }
@@ -230,7 +230,7 @@ exports.uploadDocument = async (req, res) => {
             logger.warning('No se ha proporcionado ningún archivo para cargar');
             return res.status(400).send('No se ha proporcionado ningún archivo');
         }
-        const userId = req.params.id; 
+        const userId = req.params.id;
         const user = await userService.getUserById(userId);
         if (!user) {
             logger.warning(`Usuario no encontrado para el ID: ${userId}`);
@@ -239,10 +239,10 @@ exports.uploadDocument = async (req, res) => {
         // Crear el nuevo documento
         const newDocument = {
             name: req.file.originalname,
-            
+
             reference: req.file.path // Ruta o enlace al archivo
         };
-        // Agregar el nuevo documento al array 'documents' del usuario
+        // Agregar el nuevo documento al array 'documents' adel usuario
         user.documents.push(newDocument);
         // Actualizar el estado del documento subido
         const documentType = req.file.mimetype.split('/')[1];
@@ -260,5 +260,15 @@ exports.uploadDocument = async (req, res) => {
     } catch (error) {
         logger.error('Error al subir y guardar el archivo: ' + error.message);
         res.status(500).send('Error al subir y guardar el archivo');
+    }
+};
+
+exports.deleteInactiveUsers = async (req, res) => {
+    try {
+        const deletedUsersCount = await deleteInactiveUsers();
+        res.status(200).json({ message: `${deletedUsersCount} usuarios eliminados por inactividad` });
+    } catch (error) {
+        console.error('Error al eliminar usuarios inactivos:', error);
+        res.status(500).json({ error: 'Error eliminando usuarios inactivos' });
     }
 };

@@ -11,7 +11,7 @@ if (!fs.existsSync(documentsPath)) {
 // Configuración de Multer para la subida de archivos
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, documentsPath); // Ruta donde se guardarán los documentos
+        cb(null, documentsPath); 
     },
     filename: (req, file, cb) => {
         const timestamp = Date.now();

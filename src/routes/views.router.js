@@ -14,6 +14,7 @@ router.get('/login', isNotAuthenticated, viewsController.login);
 router.get('/register', isNotAuthenticated, viewsController.register);
 router.get('/profile', isAuthenticated, viewsController.profile);
 router.get('/tickets/:ticketId', isAuthenticated, isUserOrPremium, viewsController.renderTicket);
+router.get('/PanelAdmin',isAuthenticated, isAdmin, viewsController.getAllUsers);
 
 router.get('/enviarLink', viewsController.requestPasswordReset);
 router.get('/restablecerPass', viewsController.resetPassword); // Vista para introducir la nueva contraseña

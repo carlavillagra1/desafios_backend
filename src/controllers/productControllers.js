@@ -4,7 +4,10 @@ const EErrors = require('../services/errors/enums.js');
 const ProductService = require('../services/productService.js');
 const productService = new ProductService();
 const logger = require('../utils/logger.js')
-const { getUserOwner } = require('../public/js/auth.js')
+const { sendProductDeletionEmail } = require('../public/js/emailProductEliminado.js');
+const UserManager = require('../dao/userManager.js')
+const userManager = new UserManager()
+
 
 
 exports.createProduct = async (req, res, next) => {
@@ -74,9 +77,28 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.session.user._id ||req.session.user.id ;
+        const userId = req.session.user._id || req.session.user.id;
         const userRole = req.session.user.role;
-        const result = await productService.deleteProduct(id, userId, userRole);
+        const product = await productService.getProductById(id);
+        if (!product) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+        const owner = await userManager.getUserById(product.owner);
+        if (!owner) {
+            return res.status(404).json({ message: 'Propietario no encontrado' });
+        }
+        const ownerEmail = owner.email;
+        const ownerName = owner.nombre;
+        await productService.deleteProduct(id, userId, userRole);
+        if (userRole === 'premium') {
+            try {
+                // Llamar a la nueva función para enviar el correo
+                await sendProductDeletionEmail(ownerEmail, ownerName, id);
+                logger.info('Correo electrónico enviado informando al propietario del producto eliminado');
+            } catch (emailError) {
+                logger.error('Error al enviar el correo: ' + emailError.message);
+            }
+        }
         res.status(200).json({ result: 'success' });
     } catch (error) {
         logger.error('Error al eliminar el producto: ' + error.message);
