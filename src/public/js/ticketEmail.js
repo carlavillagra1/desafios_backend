@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv')
+const logger = require('../../utils/logger.js')
 dotenv.config()
 ;
 const transporter = nodemailer.createTransport({
@@ -13,7 +14,6 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendTicketByEmail(userEmail, subject, text, html) {
-    console.log('Enviando correo a:', userEmail); // Verifica el email
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: userEmail,
@@ -24,7 +24,7 @@ async function sendTicketByEmail(userEmail, subject, text, html) {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log('Email enviado con éxito');
+        logger.info('Email del ticket enviado con éxito');
     } catch (error) {
         console.error('Error al enviar el email:', error);
         throw new Error('Error al enviar el email: ' + error.message);

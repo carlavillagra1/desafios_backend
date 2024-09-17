@@ -1,17 +1,22 @@
-.hidden{
+.hidden {
     display: none;
 }
-.container{
+
+.container {
     padding: 10px;
     height: 96vh;
     text-align: center;
 }
-.contenedorCarts{
+
+.contenedorCarts {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: center;
 }
-.carts{
+
+.carts {
     border: 2px solid gray;
     border-radius: 10px;
     width: 200px;
@@ -22,7 +27,8 @@
     align-items: center;
     height: 350px;
 }
-.infoFoto{
+
+.infoFoto {
     width: 150px;
     height: 150px;
     align-items: center;
@@ -31,10 +37,12 @@
     padding: 10px;
     background-image: url();
 }
-.infoFoto strong{
+
+.infoFoto strong {
     font-size: 10px;
 }
-.btnDetail{
+
+.btnDetail {
     width: 150px;
     background: gray;
     color: black;
@@ -48,7 +56,7 @@
     text-align: center;
 }
 
-.paginate{
+.paginate {
     padding: 10px;
     font-weight: bolder;
     align-items: center;
@@ -57,9 +65,11 @@
     justify-content: center;
     gap: 10px;
 }
-.paginate a{
+
+.paginate a {
     width: 200px;
     display: flex;
+
     justify-content: center;
     flex-direction: row;
     border: 2px solid gray;
@@ -69,7 +79,7 @@
     text-decoration: none;
 }
 
-.btnCarrito{
+.btnCarrito {
     width: 150px;
     background: gray;
     color: black;
@@ -79,11 +89,13 @@
     border-radius: 10px;
     font-size: 15px;
 }
-.container h2{
+
+.container h2 {
     text-align: center;
     align-items: center;
 }
-.containercart{
+
+.containercart {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -91,7 +103,8 @@
     gap: 10px;
 
 }
-.cartDetail{
+
+.cartDetail {
     border: 2px solid gray;
     border-radius: 10px;
     width: 850px;
@@ -102,12 +115,14 @@
     align-items: center;
     height: 450px;
 }
-.infoFotoDetail{
+
+.infoFotoDetail {
     width: 300px;
     height: 300px;
     border-radius: 10px;
 }
-.infoD{
+
+.infoD {
     width: 300px;
     height: 315px;
     padding: 6px;
@@ -120,9 +135,10 @@
     justify-content: space-evenly;
     gap: 5px;
     border-radius: 10px;
-    
+
 }
-.volver a{
+
+.volver a {
     text-decoration: none;
     width: 200px;
     display: flex;
@@ -134,17 +150,19 @@
     color: black;
 }
 
-.contenedorFilter{
+.contenedorFilter {
     padding: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
 }
-.sectionCategory{
+
+.sectionCategory {
     width: 200px;
     padding: 10px;
 }
-.category{
+
+.category {
     border: 4px solid gray;
     width: 209px;
     height: 40px;
@@ -154,12 +172,14 @@
     padding: 3px;
     color: gray;
 }
-.category option{
+
+.category option {
     background: none;
     color: black;
     font-weight: bold;
 }
-.sectionInput{
+
+.sectionInput {
     width: 750px;
     height: 40px;
     padding: 10px;
@@ -168,13 +188,15 @@
     justify-content: space-evenly;
     align-items: center;
 }
-.Limite{
+
+.Limite {
     width: 50px;
     height: 20px;
     padding: 4px;
     font-weight: bold;
 }
-.limit{
+
+.limit {
     width: 60px;
     height: 10px;
     border-radius: 10px;
@@ -183,14 +205,15 @@
     font-weight: bold;
     padding: 10px;
 }
-.buscador{
+
+.buscador {
     width: 250px;
     border-radius: 20px;
     border: 2px solid gray;
     padding: 10px;
 }
 
-.precios{
+.precios {
     width: 120px;
     border-radius: 10px;
     font-size: 14px;
@@ -198,13 +221,15 @@
     padding: 10px;
     border: none;
 }
-.precios option{
+
+.precios option {
     background: none;
     color: black;
     font-weight: bold;
     font-size: 13px;
 }
-.btn{
+
+.btn {
     width: 150px;
     padding: 10px;
     font-size: 15px;
@@ -213,7 +238,8 @@
     background: gray;
     border: none;
 }
-.carrito{
+
+.carrito {
     background: gray;
     width: 90%;
     align-items: center;
@@ -223,12 +249,14 @@
     padding: 10px;
     overflow-y: scroll;
 }
-.infoFotoCart{
+
+.infoFotoCart {
     width: 80px;
     height: 80px;
     border-radius: 50%;
 }
-.carrito li{
+
+.carrito li {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -237,7 +265,8 @@
     align-items: center;
     text-align: center;
 }
-.btnEliminar{
+
+.btnEliminar {
     width: 150px;
     font-size: 15px;
     font-weight: bold;
@@ -245,19 +274,22 @@
     background: aliceblue;
     border: none;
 }
-.total{
+
+.total {
     display: block;
     align-items: center;
     text-align: center;
     font-size: 20px;
 }
-.lista{
+
+.lista {
     background: gray;
     width: 550px;
     align-items: center;
     color: aliceblue;
 }
-.saludo{
+
+.saludo {
     padding: 5px;
     width: 98%;
     border: 2px solid gray;
@@ -268,16 +300,18 @@
     flex-direction: row;
     justify-content: space-evenly;
 }
-.saludoUser{
+
+.saludoUser {
     padding: 10px;
 }
-.logo{
+
+.logo {
     color: gray;
     font-weight: bolder;
     letter-spacing: 2px;
 }
 
-.boton{
+.boton {
     display: flex;
     width: 500px;
     flex-direction: row;
@@ -285,7 +319,8 @@
     align-items: center;
     justify-content: space-evenly;
 }
-.btnPerfil{
+
+.btnPerfil {
     width: 120px;
     padding: 10px;
     background: gray;
@@ -296,7 +331,8 @@
     font-size: 12px;
     text-decoration: none;
 }
-.btnCarrito{
+
+.btnCarrito {
     width: 120px;
     padding: 10px;
     background: gray;
@@ -307,7 +343,8 @@
     font-size: 12px;
     margin: 5px;
 }
-.btnPremium{
+
+.btnPremium {
     width: 150px;
     padding: 10px;
     background: gray;
@@ -318,15 +355,18 @@
     font-size: 12px;
     margin: 5px;
 }
-.btnPremium a{
+
+.btnPremium a {
     text-decoration: none;
     color: aliceblue;
 }
-.btnCarrito a{
+
+.btnCarrito a {
     text-decoration: none;
     color: aliceblue;
 }
-.btnCerrar{
+
+.btnCerrar {
     width: 120px;
     padding: 10px;
     background: gray;
@@ -336,18 +376,21 @@
     border: none;
     font-size: 12px;
 }
-.containerREALTIME{
+
+.containerREALTIME {
     padding: 10px;
     height: 96vh;
-    
+
 }
-.containerForm{
+
+.containerForm {
     display: flex;
     flex-direction: row;
     padding: 10px;
     justify-content: space-evenly;
 }
-.form{
+
+.form {
     background-color: gray;
     width: 400px;
     display: flex;
@@ -359,7 +402,8 @@
     border-radius: 10px;
     font-weight: bold;
 }
-.btnA{
+
+.btnA {
     width: 150px;
     border: 2px solid aliceblue;
     padding: 10px;
@@ -367,13 +411,15 @@
     font-weight: bold;
 
 }
-.form input{
+
+.form input {
     width: 200px;
     border-radius: 10px;
     border: none;
     padding: 5px;
 }
-.listaP{
+
+.listaP {
     width: 850px;
     border: 2px solid gray;
     border-radius: 10px;
@@ -382,12 +428,13 @@
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-evenly;
-    height: 500px; 
-    overflow-y: scroll; 
+    height: 500px;
+    overflow-y: scroll;
     gap: 10px;
 
 }
-.contenedorProduct{
+
+.contenedorProduct {
     background-color: gray;
     width: 250px;
     align-items: center;
@@ -396,9 +443,10 @@
     flex-direction: column;
     font-size: 15px;
     padding: 10px;
-    
+
 }
-.btnEliminarP{
+
+.btnEliminarP {
     background: gray;
     width: 80px;
     padding: 10px;
@@ -407,14 +455,15 @@
     color: aliceblue;
     font-weight: bold;
 }
-.containerLogin{
+
+.containerLogin {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
 }
 
-.login{
+.login {
     background: gray;
     width: 550px;
     height: 400px;
@@ -424,10 +473,10 @@
     text-align: center;
     border-radius: 10px;
 
-    
+
 }
 
-.login form{
+.login form {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -435,15 +484,17 @@
     gap: 10px;
     font-weight: bold;
     padding: 10px;
-    
+
 }
-.login input{
+
+.login input {
     width: 200px;
     border-radius: 10px;
     padding: 6px;
-    border:none;
+    border: none;
 }
-.ingresar{
+
+.ingresar {
     width: 150px;
     padding: 10px;
     border-radius: 10px;
@@ -452,11 +503,13 @@
     margin: 10px;
     text-decoration: none;
 }
-.login a{
+
+.login a {
     color: aliceblue;
     text-decoration: none;
 }
-.formRegister{
+
+.formRegister {
     background-color: gray;
     width: 800px;
     height: 550px;
@@ -465,7 +518,8 @@
     border-radius: 10px;
     font-weight: bold;
 }
-.formRegister form{
+
+.formRegister form {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -474,20 +528,23 @@
     text-align: center;
     gap: 5px;
 }
-.formRegister input{
+
+.formRegister input {
     width: 200px;
     padding: 5px;
     border-radius: 10px;
     border: none;
-    
+
 
 }
-.formRegister a{
+
+.formRegister a {
     text-decoration: none;
     color: aliceblue;
     font-weight: bold;
 }
-.perfil{
+
+.perfil {
     border: 2px solid gray;
     width: 90%;
     height: 550px;
@@ -498,30 +555,34 @@
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    
+
 }
-.infoP{
+
+.infoP {
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: center;
 }
-.documento{
+
+.documento {
     background-color: gray;
     padding: 10px;
     width: 500px;
     height: 150px;
     padding: 10px;
-    
-}
-.documento input{
-    background: none;
-    border: solid  2px gray;
+
 }
 
-.btnCajaPadre{
+.documento input {
+    background: none;
+    border: solid 2px gray;
+}
+
+.btnCajaPadre {
     padding: 10px;
 }
+
 .btnCambiarRol {
     background-color: #27292b;
     color: white;
@@ -535,7 +596,7 @@
     background-color: #667c94;
 }
 
-.listUsers{
+.listUsers {
     background: gainsboro;
     width: 950px;
     padding: 10px;
@@ -543,14 +604,344 @@
     text-align: center;
 
 }
-.listUsers table{
+
+.listUsers table {
     padding: 10px;
     overflow-y: scroll;
 }
-.listUsers tbody{
+
+.listUsers tbody {
     background: rgb(223, 214, 214);
     padding: 10px;
-    
+
 }
 
+/* RESPONSIVE TABLET */
+@media (min-width: 768px) and (max-width: 1024px) {
 
+    /* home */
+    .container {
+        padding: 10px;
+
+    }
+
+    .saludo {
+        width: 98%;
+    }
+
+    .contenedorFilter {
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .contenedorCarts {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    .carts {
+        width: 170px;
+        height: 260px;
+    }
+
+    /* ProductDetail */
+    .containercart {
+        align-items: center;
+    }
+
+    .cartDetail {
+        width: 560px;
+        height: 400px;
+    }
+
+    .infoFotoDetail {
+        width: 220px;
+        height: 220px;
+    }
+
+    .infoD {
+        width: 250px;
+        height: 300px;
+        font-size: 15px;
+    }
+
+    /* Perfil */
+    .perfil {
+        width: 100%;
+    }
+
+    .documento {
+        width: 440px;
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    /* admin */
+    .containerREALTIME {
+        height: 100vh;
+    }
+
+    .containerForm {
+        height: 80vh;
+
+    }
+
+    .listaP {
+        height: 75vh;
+    }
+
+    .contenedorProduct {
+        width: 180px;
+        font-size: 15px;
+
+    }
+
+    .listUsers {
+        width: 98%;
+    }
+}
+
+/* tamaño celular */
+@media (max-width: 767px) {
+
+
+
+    /* login */
+    .login{
+        width: 350px;
+    }
+
+    /* register */
+    .containerFormRegister{
+        height: 95vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+
+    }
+    .formRegister{
+        width: 340px;
+        height: 90vh;
+        text-align: center;
+
+        
+    }
+    /* home */
+    .container {
+        height: 100vh;
+        align-items: center;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+    .saludo {
+        width: 97%;
+        display: flex;
+        flex-direction: column;
+    }
+    .boton{
+        width: 320px;
+    }
+    .btnPremium{
+        width: 110px;
+    }
+    .btnPerfil{
+        width: 100px;
+    }
+    .btnCarrito{
+        width: 100px;
+        
+    }
+    .btnCerrar{
+        width: 100px;
+        font-size: 12px;
+    }
+    .contenedorFilter {
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        
+        
+    }
+
+    .sectionCategory select{
+        width: 100px;
+    }
+    .sectionInput{
+        width: 50px;
+        font-size: 15px;
+    }
+    .sectionInput select{
+        width: 100px;
+    }
+    .sectionInput input{
+        width: 110px;
+    }
+    .sectionInput .limit{
+        width: 10px;
+    }
+    .sectionInput .precios{
+        width: 80px;
+        font-size: 11px;
+    }
+    .contenedorCarts {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+
+    .carts {
+        width: 170px;
+        height: 260px;
+    }
+
+    /* ProductDetail */
+    .cartDetail {
+        width: 320px;
+        height: 600px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .infoFotoDetail {
+        width: 220px;
+        height: 200px;
+    }
+
+    .infoD {
+        width: 220px;
+        height: 300px;
+        font-size: 15px;
+    }
+    /* carrito */
+    .carrito{
+        width: 360px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        overflow-y: scroll;
+    }
+
+    .carrito img{
+        width: 30px;
+        height: 30px;
+    }
+    .carrito li{
+        width: 370px;
+        font-size: 10px;
+        padding: 0px;
+        gap: 0px;
+    } 
+    .carrito .btnEliminar{
+        width: 50px;
+        font-size: 8px;
+        
+    }
+    .carrito button{
+        width: 100px;
+        font-size: 11px;
+    }
+    .carrito .total {
+        width: 100px;
+        text-align: center;
+        align-items: center;
+        font-size: 14px;
+    }
+
+
+    /* Perfil */
+    .perfil {
+        width: 100%;
+        height: 400vh;
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        padding: 10px;
+        
+    }
+
+    .documento {
+        width: 350px;
+        height: 130px;
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+    .documento input{
+        font-size: 10px;
+    }
+    .documento button{
+        width: 80px;
+        font-size: 10px;
+    }
+    .btnCajaPadre .btnCambiarRol{
+        width: 140px;
+        font-size: 10px;
+    }
+
+    /* admin */
+    .containerREALTIME {
+        height: 210vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .containerForm {
+        height: 280vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+    }
+    .form{
+        width: 320px;
+        font-size: 12px;
+
+}
+    .btnA{
+        width: 110px;
+        font-size: 10px;
+
+    }
+    .listaP {
+        width: 350px;
+        height: 75vh;
+        
+    }
+
+    .contenedorProduct {
+        width: 120px;
+        font-size: 12px;
+
+    }
+
+    .listUsers {
+        width: 390px;
+
+    }
+    .btnEliminarInactivos{
+        width: 150px;
+        font-size: 11px;
+    }
+    .listUsers table{
+        width: 350px;
+        font-size: 8px;
+    }
+
+    .listUsers .btnCambiarRol{
+        width: 70px;
+        font-size: 9px;
+    }
+
+
+}

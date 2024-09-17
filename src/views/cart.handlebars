@@ -5,7 +5,7 @@
                 <strong class="total">Total: ${{total}}</strong>
             {{#each cartGroupedProducts}}
                 <li>
-                    <img class="infoFotoCart" src="{{this.thumbnail.[0]}}" alt="{{this.title}}">  <strong>Producto:</strong> {{this.title}}  <strong>Precio:</strong> ${{this.price}} <strong>Cantidad:</strong> {{this.totalQuantity}}
+                    <img class="infoFotoCart" src="{{this.thumbnail.[0]}}" alt="{{this.title}}">  {{this.title}}  <strong>Precio:</strong> ${{this.price}} <strong>Cantidad:</strong> {{this.totalQuantity}}
                     <strong>Subtotal:</strong> {{this.subtotal}} <button class="btnEliminar" data-product-id="{{this._id}}" data-cart-id="{{../cartId}}">Eliminar</button>
                 </li>
             {{/each}}

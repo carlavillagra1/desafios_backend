@@ -52,7 +52,7 @@
         .then(data => {
             if (data.success) {
                 alert(`El rol ha sido cambiado a ${nuevoRol}`);
-                location.reload(); // Recargar la página para ver el cambio
+                location.reload(); 
             } else {
                 alert('Error al cambiar el rol');
             }
@@ -74,7 +74,7 @@
                     alert('Error al eliminar usuarios inactivos');
                 } else {
                     alert(`${data.message}`);
-                    location.reload(); // Recargar la página para actualizar la lista de usuarios
+                    location.reload();
                 }
             })
             .catch(error => {

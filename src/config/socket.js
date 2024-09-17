@@ -104,7 +104,7 @@ const initializeSocket = (httpServer) => {
                     throw new Error('ID del producto no proporcionado');
                 }
 
-                // Verificar si el producto existe y si el usuario tiene permiso para eliminarlo
+                // Verifica si el producto existe y si el usuario tiene permiso para eliminarlo
                 const productToDelete = await productManager.getProductById(product._id);
                 if (!productToDelete) {
                     throw new Error('El producto no pudo ser encontrado');
@@ -120,7 +120,7 @@ const initializeSocket = (httpServer) => {
                     throw new Error('El producto no pudo ser eliminado');
                 }
 
-                // Obtener el dueño del producto antes de eliminar
+                // Obtiene el dueño del producto antes de eliminar
                 const owner = await User.findById(productToDelete.owner);
                 if (owner && owner.role === 'premium') {
                     const ownerEmail = owner.email;
@@ -128,7 +128,7 @@ const initializeSocket = (httpServer) => {
                     await sendProductDeletionEmail(ownerEmail, ownerName, product._id);
                 }
 
-                // Actualizar la lista de productos
+                // Actualiza la lista de productos
                 const products = await productManager.readProducts();
                 socket.emit('products', products);
                 socket.emit('responseDelete', 'Producto eliminado y notificado por correo.');
@@ -145,7 +145,7 @@ const initializeSocket = (httpServer) => {
                 return;
             }
 
-            // Verificar que el usuario sea dueño del producto o admin
+            // Verifica que el usuario sea dueño del producto o admin
             productManager.getProductById(id)
                 .then((existingProduct) => {
                     if (!existingProduct) {

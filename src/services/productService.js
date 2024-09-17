@@ -40,7 +40,7 @@ class ProductService {
     async updateProduct(id, updatedData) {
         try {
             const product = await productManager.updateProduct(id, updatedData);
-            return { result: product };  // Asegúrate de que coincida con la expectativa de la prueba
+            return { result: product }; 
         } catch (error) {
             throw new Error("Error al actualizar el producto: " + error.message);
         }

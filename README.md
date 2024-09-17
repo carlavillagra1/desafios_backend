@@ -36,6 +36,12 @@ Luego de inicializar en la terminal, abrir en chrome y escribir el puerto que es
 
 ![](/imgREADME/listauser.png)
 
+
+*La vista del perfil tiene la opcion de cambiar de rol a premium o viseversa, el cual solo se puede cambiar si el usuaio tiene mas de 3 documentos, archvios subidos.*
+
+![](/imgREADME/profile.png)
+
+
 *Esta es la vista del carrrito. El usuario premium no puede agregar su producto al carrito.*
 * Al finalizar, se crea un ticket de compra y se envia por email con los detalles de su compra y se vacia el carrito automaticamente.
 

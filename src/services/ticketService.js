@@ -11,20 +11,15 @@ class TicketService{
     
     async createTicket(userId) {
         try {
-            // Obtener usuario y carrito del usuario
             const user = await ticketRepository.getUserCart(userId);
             if (!user || !user.cart) {
                 logger.error('Error al encontrar el usuario o carrito' + error.message)
                 throw new Error('Usuario o carrito no encontrado');
             }
-            // Calcular el total del carrito
             const cart = user.cart;
             const totalAmount = cart.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
     
-            // Crear el ticket usando el repositorio
             const newTicket = await ticketRepository.createTicket(user._id, cart._id, totalAmount);
-    
-            // Populating the ticket with necessary data
             const populatedTicket = await ticketRepository.getTicketById(newTicket._id);
     
             return populatedTicket;

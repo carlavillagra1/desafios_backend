@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.btnEliminar').forEach(button => {
         button.addEventListener('click', function () {
             const productId = button.getAttribute('data-product-id');
-            const cartId = this.getAttribute('data-cart-id'); // Obtener el ID del carrito
+            const cartId = this.getAttribute('data-cart-id'); 
             eliminarProductoDelCarrito(cartId, productId);
         });
     });
@@ -15,7 +15,7 @@ function eliminarProductoDelCarrito(cartId, productId) {
         .then(response => response.json())
         .then(data => {
             if (data.result === "success") {
-                location.reload(); // Recarga la página para actualizar el carrito
+                location.reload(); 
             } else {
                 alert('No se pudo eliminar el producto del carrito');
             }

@@ -42,7 +42,7 @@ async function deleteInactiveUsers() {
         const text = 'Tu cuenta ha sido eliminada debido a inactividad prolongada.';
         const html = `<p>Tu cuenta ha sido eliminada debido a inactividad prolongada.</p>`;
 
-        // Enviar correo de eliminación
+        // Envia correo de eliminación
         await sendAccountDeletionEmail(user.email, subject, text, html);
 
         // Eliminar usuario

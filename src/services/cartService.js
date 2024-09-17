@@ -61,7 +61,7 @@ class CartService {
                 throw new Error('Carrito no encontrado');
             }
             logger.info('Carrito eliminado con éxito', { cid });
-            return null; // Retorna null para indicar que la operación fue exitosa
+            return null;
         } catch (error) {
             logger.error('Error al eliminar el carrito: ' + error.message);
             throw new Error("Error al eliminar el carrito: " + error.message);
