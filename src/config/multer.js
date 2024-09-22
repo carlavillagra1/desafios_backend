@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 
-// Verificar y crear la carpeta "documents" si no existe
+// Verifica y crea la carpeta "documents" si no existe
 const documentsPath = path.resolve(__dirname, '../documents');
 const fs = require('fs');
 if (!fs.existsSync(documentsPath)) {
