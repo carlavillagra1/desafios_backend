@@ -4,8 +4,8 @@ async function filtrarProductos(page = 1) {
     const query = document.getElementById('query-input').value || '';
     const sort = document.getElementById('sort-select').value || '';
 
-    // Construir la URL del navegador
-    let newUrl = `/home?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
+     // Construir la URL del navegador
+    let newUrl = `https://desafiosbackend-production-c1df.up.railway.app/api/views/home?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
     if (categoria !== 'products') {
         newUrl += `&categoria=${categoria}`;
     }
@@ -27,11 +27,8 @@ async function filtrarProductos(page = 1) {
 
         const productosContainer = document.getElementById('productos');
         const contenedorPrincipal = document.getElementById('contenedorPrincipal');
-        productosContainer.innerHTML = '';  // Limpiar contenedor
-        console.log('Datos recibidos del servidor:', result);
-
+        productosContainer.innerHTML = '';  
         if (result.docs.length === 0) {
-            console.log('No hay productos para mostrar');
             productosContainer.innerHTML = '<h1>No hay productos para mostrar</h1>';
             contenedorPrincipal.classList.remove('hidden');  // Mostrar contenedor principal
             return;
