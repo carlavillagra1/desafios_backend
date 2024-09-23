@@ -100,5 +100,6 @@ async function filtrarProductos(page = 1) {
     }    
     catch (error) {
         document.getElementById('productos').innerHTML = "<h1>Error al filtrar productos</h1>";
+        document.getElementById('contenedorPrincipal').classList.remove('hidden');
     }
 }

@@ -718,9 +718,9 @@
 @media (max-width: 767px) {
 
     .hidden {
-        display: none;
+        display: none !important;
     }
-
+    
     /* login */
     .login{
         width: 350px;
