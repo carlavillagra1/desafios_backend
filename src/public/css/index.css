@@ -625,6 +625,9 @@
 /* RESPONSIVE TABLET */
 @media (min-width: 768px) and (max-width: 1024px) {
 
+    .hidden {
+        display: none;
+    }
     /* home */
     .container {
         padding: 10px;
@@ -714,7 +717,9 @@
 /* tamaño celular */
 @media (max-width: 767px) {
 
-
+    .hidden {
+        display: none;
+    }
 
     /* login */
     .login{
