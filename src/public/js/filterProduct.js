@@ -5,7 +5,7 @@ async function filtrarProductos(page = 1) {
     const sort = document.getElementById('sort-select').value || '';
 
      // Construir la URL del navegador
-    let newUrl = `https://desafiosbackend-production-c1df.up.railway.app/api/views/home?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
+    let newUrl = `/home?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
     if (categoria !== 'products') {
         newUrl += `&categoria=${categoria}`;
     }

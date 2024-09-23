@@ -18,8 +18,8 @@ exports.home = async (req, res) => {
         let categoria = req.query.categoria || '';
 
         const result = await productManager.paginateProduct({ page, limit, sort, query, categoria });
-        result.prevLink = result.hasPrevPage ? `http://localhost:8080/api/views/home?page=${result.prevPage}&limit=${limit}&sort=${sort}&query=${query}&categoria=${categoria}` : '';
-        result.nextLink = result.hasNextPage ? `http://localhost:8080/api/views/home?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}&categoria=${categoria}` : '';
+        result.prevLink = result.hasPrevPage ? `/api/views/home?page=${result.prevPage}&limit=${limit}&sort=${sort}&query=${query}&categoria=${categoria}` : '';
+        result.nextLink = result.hasNextPage ? `/api/views/home?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}&categoria=${categoria}` : '';
         result.isValid = !(page <= 0 || page > result.totalPages);
 
         res.render("home", { result, user: req.session.user, style: 'index.css' });
